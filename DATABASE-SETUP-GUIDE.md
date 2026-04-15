@@ -3,6 +3,14 @@
 ## Overview
 Since Render's free tier doesn't have Shell access, we created a special endpoint that initializes your database with just ONE click in your browser!
 
+## ⚠️ Important: If You Already Deployed
+If you previously deployed this project and now see custom attractions not syncing between devices, you need to **re-run the database setup** to apply the latest schema changes. The setup endpoint will:
+- Drop existing tables
+- Create new tables with updated schema (including custom attractions support)
+- Insert fresh sample data
+
+**Note:** This will reset your database, so any existing bookings or custom data will be lost. The demo accounts (admin and user) will be recreated.
+
 ---
 
 ## 🎯 Step-by-Step Database Setup
