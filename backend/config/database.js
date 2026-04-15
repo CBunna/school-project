@@ -10,7 +10,7 @@ const pool = new Pool(
         ssl: process.env.NODE_ENV === 'production' ? { rejectUnauthorized: false } : false,
         max: 20,
         idleTimeoutMillis: 30000,
-        connectionTimeoutMillis: 2000,
+        connectionTimeoutMillis: 10000,  // Increased to 10 seconds for Render
       }
     : {
         host: process.env.DB_HOST || 'localhost',
