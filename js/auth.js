@@ -153,11 +153,24 @@ function register(userData) {
  * Logout user
  */
 function logout() {
+    // Remove both user data and JWT token
     localStorage.removeItem('user');
+    localStorage.removeItem('token');
+
     showMessage('Logged out successfully', 'success');
+
     setTimeout(() => {
-        // Always go to root index.html
-        const indexPath = window.location.pathname.includes('/pages/') ? '../../index.html' : 'index.html';
+        // Determine correct path to index.html based on current location
+        let indexPath;
+
+        if (window.location.pathname.includes('/pages/admin/')) {
+            indexPath = '../../index.html';
+        } else if (window.location.pathname.includes('/pages/')) {
+            indexPath = '../index.html';
+        } else {
+            indexPath = 'index.html';
+        }
+
         window.location.href = indexPath;
     }, 1000);
 }
