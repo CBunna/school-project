@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Create a Beskydy Region account to book accommodations and activities">
+    <title>Register | Beskydy Region</title>
+    <link rel="stylesheet" href="../../css/style.css">
+    <link rel="icon" type="image/x-icon" href="images/favicon.ico">
+</head>
+<body>
+    <a href="#main-content" class="skip-link">Skip to main content</a>
+
+    <header class="site-header" role="banner">
+        <div class="header-container">
+            <div class="site-branding">
+                <a href="../../index.html" class="logo">🏔️ Beskydy Region</a>
+                <p class="tagline">Discover mountain beauty</p>
+            </div>
+            <nav class="main-navigation" role="navigation">
+                <button class="nav-toggle" aria-label="Toggle menu">☰</button>
+                <ul class="nav-menu">
+                    <li><a href="../../index.html">Home</a></li>
+                    <li><a href="../public/attractions.html">Attractions</a></li>
+                    <li><a href="../public/accommodation.html">Accommodation</a></li>
+                    <li><a href="../public/activities.html">Activities</a></li>
+                    <li><a href="../public/contact.html">Contact</a></li>
+                    <li><a href="register.html" class="active">Register</a></li>
+                </ul>
+            </nav>
+        </div>
+        <div class="student-notice">
+            <p><strong>Student Project</strong> | Created by PEF CZU Prague students for educational purposes only.</p>
+        </div>
+    </header>
+
+    <main id="main-content" class="auth-page">
+        <div class="auth-container">
+            <div class="auth-card">
+                <h1>Create Your Account</h1>
+                <p class="auth-subtitle">Join us to book accommodations and save your favorite places</p>
+
+                <form id="register-form" class="auth-form">
+                    <div class="form-group">
+                        <label for="fullname">Full Name *</label>
+                        <input
+                            type="text"
+                            id="fullname"
+                            name="fullname"
+                            required
+                            placeholder="John Smith"
+                            autocomplete="name"
+                        >
+                    </div>
+
+                    <div class="form-group">
+                        <label for="email">Email Address *</label>
+                        <input
+                            type="email"
+                            id="email"
+                            name="email"
+                            required
+                            placeholder="your.email@example.com"
+                            autocomplete="email"
+                        >
+                    </div>
+
+                    <div class="form-group">
+                        <label for="phone">Phone Number (Optional)</label>
+                        <input
+                            type="tel"
+                            id="phone"
+                            name="phone"
+                            placeholder="+420 123 456 789"
+                            autocomplete="tel"
+                        >
+                    </div>
+
+                    <div class="form-group">
+                        <label for="country">Country *</label>
+                        <select id="country" name="country" required>
+                            <option value="">Select your country</option>
+                            <option value="CZ" selected>Czech Republic</option>
+                            <option value="SK">Slovakia</option>
+                            <option value="PL">Poland</option>
+                            <option value="DE">Germany</option>
+                            <option value="AT">Austria</option>
+                            <option value="US">United States</option>
+                            <option value="UK">United Kingdom</option>
+                            <option value="other">Other</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="password">Password *</label>
+                        <input
+                            type="password"
+                            id="password"
+                            name="password"
+                            required
+                            placeholder="Minimum 8 characters"
+                            minlength="8"
+                            autocomplete="new-password"
+                        >
+                        <div id="password-strength" class="password-strength" aria-live="polite"></div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="confirm-password">Confirm Password *</label>
+                        <input
+                            type="password"
+                            id="confirm-password"
+                            name="confirm-password"
+                            required
+                            placeholder="Re-enter your password"
+                            minlength="8"
+                            autocomplete="new-password"
+                        >
+                        <div id="password-match" class="password-match" aria-live="polite"></div>
+                    </div>
+
+                    <div class="form-group checkbox-group">
+                        <label class="checkbox-label">
+                            <input type="checkbox" id="terms" name="terms" required>
+                            <span>I agree to the <a href="#" target="_blank">Terms and Conditions</a> *</span>
+                        </label>
+                    </div>
+
+                    <div class="form-group checkbox-group">
+                        <label class="checkbox-label">
+                            <input type="checkbox" id="gdpr" name="gdpr" required>
+                            <span>I consent to the processing of my personal data in accordance with <a href="#" target="_blank">GDPR</a> *</span>
+                        </label>
+                    </div>
+
+                    <div class="form-group checkbox-group">
+                        <label class="checkbox-label">
+                            <input type="checkbox" id="newsletter" name="newsletter">
+                            <span>Send me news and special offers via email</span>
+                        </label>
+                    </div>
+
+                    <button type="submit" class="btn-primary btn-block">Create Account</button>
+
+                    <p class="auth-footer">
+                        Already have an account? <a href="login.html">Login here</a>
+                    </p>
+                </form>
+
+                <div class="divider">
+                    <span>OR</span>
+                </div>
+
+                <div class="social-login">
+                    <button class="btn-social btn-google" type="button">
+                        <span>Sign up with Google</span>
+                    </button>
+                    <button class="btn-social btn-facebook" type="button">
+                        <span>Sign up with Facebook</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <footer class="site-footer" role="contentinfo">
+        <div class="footer-content">
+            <div class="footer-section">
+                <h3>About Beskydy</h3>
+                <p>Discover the beauty of the Beskydy Mountains - your perfect destination for nature and adventure.</p>
+            </div>
+
+            <div class="footer-section">
+                <h3>Quick Links</h3>
+                <ul class="footer-links">
+                    <li><a href="../../index.html">Home</a></li>
+                    <li><a href="../public/attractions.html">Attractions</a></li>
+                    <li><a href="../public/accommodation.html">Accommodation</a></li>
+                    <li><a href="../public/contact.html">Contact</a></li>
+                </ul>
+            </div>
+
+            <div class="footer-section">
+                <h3>Contact</h3>
+                <p>📍 Rožnov pod Radhoštěm, Czech Republic</p>
+                <p>📧 info@beskydy-region.cz</p>
+                <p>📞 +420 571 111 222</p>
+            </div>
+        </div>
+
+        <div class="footer-bottom">
+            <p>&copy; 2025 Beskydy Region Tourism. Student Project - PEF CZU Prague</p>
+        </div>
+    </footer>
+
+    <script src="../../js/main.js"></script>
+    <script src="../../js/auth.js"></script>
+</body>
+</html>

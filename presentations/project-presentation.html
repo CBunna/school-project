@@ -1,0 +1,794 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Beskydy Tourism Website – Project Presentation</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: #0a0e27;
+      color: #e8eaed;
+      height: 100vh;
+      overflow: hidden;
+    }
+
+    /* ── Slide container ── */
+    .slides { width: 100%; height: 100vh; position: relative; }
+
+    .slide {
+      display: none;
+      width: 100%;
+      height: 100vh;
+      padding: 65px 85px;
+      flex-direction: column;
+      justify-content: center;
+      position: absolute;
+      top: 0; left: 0;
+      animation: fadeIn 0.4s ease;
+    }
+    .slide.active { display: flex; }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(18px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    /* ── Slide backgrounds ── */
+    .slide-1 { background: linear-gradient(135deg, #1a2332 0%, #0a0e27 100%); }
+    .slide-2 { background: linear-gradient(135deg, #0a0e27 0%, #1a2332 100%); }
+    .slide-3 { background: linear-gradient(135deg, #1a2332 0%, #0f1628 100%); }
+    .slide-4 { background: linear-gradient(135deg, #0f1628 0%, #0a0e27 100%); }
+    .slide-5 { background: linear-gradient(135deg, #0a0e27 0%, #1a2332 100%); }
+    .slide-6 { background: linear-gradient(135deg, #1a2332 0%, #0a0e27 100%); }
+    .slide-7 { background: linear-gradient(135deg, #0f1628 0%, #0a0e27 100%); }
+    .slide-8 { background: linear-gradient(135deg, #0d3a2e 0%, #0a0e27 100%); }
+
+    /* ── Colors ── */
+    :root {
+      --green: #4ade80;
+      --blue: #60a5fa;
+      --purple: #c084fc;
+      --orange: #fb923c;
+      --yellow: #fbbf24;
+    }
+
+    /* ── Typography ── */
+    .tag {
+      font-size: 0.75rem;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      color: var(--green);
+      margin-bottom: 16px;
+      font-weight: 600;
+    }
+
+    h1 {
+      font-size: 3.4rem;
+      font-weight: 700;
+      line-height: 1.1;
+      margin-bottom: 18px;
+      color: #fff;
+    }
+
+    h2 {
+      font-size: 2.3rem;
+      font-weight: 700;
+      color: var(--blue);
+      margin-bottom: 38px;
+      border-left: 5px solid var(--green);
+      padding-left: 20px;
+    }
+
+    h1 span, h2 span { color: var(--green); }
+
+    p.subtitle {
+      font-size: 1.18rem;
+      color: #9ca3af;
+      max-width: 700px;
+      line-height: 1.75;
+    }
+
+    /* ── Section titles ── */
+    .section-title {
+      font-size: 0.75rem;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: var(--orange);
+      margin-bottom: 16px;
+      margin-top: 24px;
+      font-weight: 600;
+    }
+
+    /* ── Two/Three columns ── */
+    .two-col {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 40px;
+      align-items: start;
+    }
+
+    .three-col {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 26px;
+      margin-top: 12px;
+    }
+
+    /* ── Cards ── */
+    .card {
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 10px;
+      padding: 24px;
+      transition: all 0.25s;
+    }
+    .card:hover {
+      background: rgba(255,255,255,0.06);
+      border-color: var(--green);
+      transform: translateY(-2px);
+    }
+    .card h3 {
+      font-size: 1.1rem;
+      color: var(--green);
+      margin-bottom: 10px;
+    }
+    .card p {
+      font-size: 0.9rem;
+      color: #9ca3af;
+      line-height: 1.6;
+    }
+    .card .icon {
+      font-size: 2rem;
+      margin-bottom: 10px;
+      display: block;
+    }
+
+    /* ── Lists ── */
+    ul.clean { list-style: none; display: flex; flex-direction: column; gap: 10px; }
+    ul.clean li {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      font-size: 0.93rem;
+      color: #d1d5db;
+      line-height: 1.65;
+    }
+    ul.clean li::before {
+      content: '▹';
+      color: var(--green);
+      flex-shrink: 0;
+      font-size: 1.15rem;
+      margin-top: 1px;
+    }
+
+    /* ── Info boxes ── */
+    .info-box {
+      background: rgba(74,222,128,0.08);
+      border-left: 4px solid var(--green);
+      padding: 20px 24px;
+      border-radius: 0 8px 8px 0;
+      margin: 12px 0;
+    }
+    .info-box h4 {
+      font-size: 0.82rem;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      color: var(--green);
+      margin-bottom: 10px;
+    }
+    .info-box p {
+      font-size: 0.92rem;
+      color: #d1d5db;
+      line-height: 1.7;
+    }
+
+    /* ── Timeline ── */
+    .timeline {
+      display: flex;
+      flex-direction: column;
+      gap: 18px;
+      margin-top: 12px;
+    }
+    .timeline-item {
+      display: flex;
+      gap: 18px;
+      align-items: flex-start;
+    }
+    .timeline-marker {
+      width: 32px;
+      height: 32px;
+      background: var(--green);
+      border-radius: 50%;
+      flex-shrink: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      color: #0a0e27;
+      font-size: 0.85rem;
+    }
+    .timeline-content h4 {
+      font-size: 1rem;
+      color: var(--blue);
+      margin-bottom: 6px;
+    }
+    .timeline-content p {
+      font-size: 0.88rem;
+      color: #9ca3af;
+      line-height: 1.6;
+    }
+
+    /* ── Screenshot grid ── */
+    .screenshot-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 18px;
+      margin-top: 12px;
+    }
+    .screenshot {
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(255,255,255,0.12);
+      border-radius: 8px;
+      padding: 14px;
+      text-align: center;
+    }
+    .screenshot-placeholder {
+      width: 100%;
+      height: 140px;
+      background: linear-gradient(135deg, rgba(74,222,128,0.1) 0%, rgba(96,165,250,0.1) 100%);
+      border-radius: 6px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 2.5rem;
+      margin-bottom: 10px;
+    }
+    .screenshot p {
+      font-size: 0.82rem;
+      color: var(--green);
+      font-weight: 600;
+    }
+
+    /* ── Feature badges ── */
+    .badge-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 14px;
+      margin-top: 12px;
+    }
+    .badge {
+      background: rgba(192,132,252,0.08);
+      border: 1px solid rgba(192,132,252,0.2);
+      border-radius: 8px;
+      padding: 16px;
+      text-align: center;
+    }
+    .badge .icon {
+      font-size: 1.8rem;
+      margin-bottom: 8px;
+    }
+    .badge p {
+      font-size: 0.85rem;
+      color: var(--purple);
+      font-weight: 600;
+    }
+
+    /* ── Author info ── */
+    .author-info {
+      margin-top: 40px;
+      padding-top: 24px;
+      border-top: 1px solid rgba(255,255,255,0.1);
+    }
+    .author-info p {
+      font-size: 0.88rem;
+      color: #9ca3af;
+      line-height: 1.9;
+    }
+    .author-info .name {
+      color: var(--green);
+      font-weight: 600;
+    }
+
+    /* ── Slide number ── */
+    .slide-number {
+      position: fixed;
+      bottom: 32px;
+      right: 40px;
+      font-size: 0.78rem;
+      color: #4b5563;
+      letter-spacing: 1px;
+    }
+
+    /* ── Navigation ── */
+    .nav {
+      position: fixed;
+      bottom: 28px;
+      left: 50%;
+      transform: translateX(-50%);
+      display: flex;
+      gap: 14px;
+      align-items: center;
+    }
+
+    .nav button {
+      background: rgba(255,255,255,0.06);
+      border: 1px solid rgba(255,255,255,0.12);
+      color: #e8eaed;
+      padding: 11px 32px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 0.88rem;
+      transition: all 0.2s;
+      font-weight: 500;
+    }
+    .nav button:hover {
+      background: rgba(74,222,128,0.15);
+      border-color: var(--green);
+    }
+    .nav button:disabled { opacity: 0.3; cursor: default; }
+
+    .dots {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+    }
+    .dot {
+      width: 7px; height: 7px;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.2);
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .dot.active { background: var(--green); transform: scale(1.4); }
+
+    /* ── University tag ── */
+    .university {
+      position: fixed;
+      top: 28px;
+      right: 40px;
+      font-size: 0.72rem;
+      color: #4b5563;
+      letter-spacing: 1px;
+    }
+  </style>
+</head>
+<body>
+
+<div class="slides">
+
+  <!-- ══════════ SLIDE 1 – Title ══════════ -->
+  <div class="slide slide-1 active">
+    <div class="tag">Server-Side Development · Project Presentation</div>
+    <h1>Beskydy Region<br><span>Tourism Website</span></h1>
+    <p class="subtitle">
+      A comprehensive web platform showcasing the beauty and attractions of the Beskydy Mountains region
+    </p>
+    <div class="author-info">
+      <p>
+        <span class="name">Bunna CHOM &nbsp;·&nbsp; Hakimov Sunnat<br>
+        Adepu Gopi Krishna &nbsp;·&nbsp; Tilek Tekinov</span>
+      </p>
+      <p>Faculty of Economics and Management · PEF CZU Prague</p>
+      <p style="margin-top:8px; font-size:0.82rem; color:#6b7280;">Supervisor: Ing. Václav Lohr, Ph.D.</p>
+    </div>
+  </div>
+
+  <!-- ══════════ SLIDE 2 – Goals ══════════ -->
+  <div class="slide slide-2">
+    <h2>Project <span>Goals</span></h2>
+
+    <div class="three-col">
+      <div class="card">
+        <span class="icon">🎯</span>
+        <h3>Primary Goal</h3>
+        <p>Create an informative tourism website for the Beskydy Mountains region to attract visitors and provide comprehensive travel information</p>
+      </div>
+
+      <div class="card">
+        <span class="icon">🎓</span>
+        <h3>Educational Goal</h3>
+        <p>Apply web development best practices including semantic HTML, responsive design, accessibility standards, and modern CSS techniques</p>
+      </div>
+
+      <div class="card">
+        <span class="icon">👥</span>
+        <h3>User Goal</h3>
+        <p>Provide tourists with easy access to information about attractions, accommodation, activities, and contact details</p>
+      </div>
+    </div>
+
+    <div class="section-title" style="margin-top:32px;">Key Objectives</div>
+    <div class="two-col">
+      <ul class="clean">
+        <li>Design responsive, mobile-first website</li>
+        <li>Implement accessible UI for all users</li>
+        <li>Showcase regional attractions and activities</li>
+        <li>Provide accommodation options</li>
+      </ul>
+      <ul class="clean">
+        <li>Include interactive contact form</li>
+        <li>Optimize for search engines (SEO)</li>
+        <li>Use semantic HTML5 and CSS3</li>
+        <li>Ensure cross-browser compatibility</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- ══════════ SLIDE 3 – Implementation Process ══════════ -->
+  <div class="slide slide-3">
+    <h2>Implementation <span>Process</span></h2>
+
+    <div class="timeline">
+      <div class="timeline-item">
+        <div class="timeline-marker">1</div>
+        <div class="timeline-content">
+          <h4>Planning & Research</h4>
+          <p>Researched Beskydy region, gathered content, defined site structure, created wireframes and selected color scheme inspired by nature</p>
+        </div>
+      </div>
+
+      <div class="timeline-item">
+        <div class="timeline-marker">2</div>
+        <div class="timeline-content">
+          <h4>HTML Structure</h4>
+          <p>Built semantic HTML5 structure with 5 pages (Home, Attractions, Accommodation, Activities, Contact), implemented navigation, header, footer</p>
+        </div>
+      </div>
+
+      <div class="timeline-item">
+        <div class="timeline-marker">3</div>
+        <div class="timeline-content">
+          <h4>CSS Styling</h4>
+          <p>Created responsive design using CSS Grid and Flexbox, implemented CSS custom properties for theming, added animations and transitions</p>
+        </div>
+      </div>
+
+      <div class="timeline-item">
+        <div class="timeline-marker">4</div>
+        <div class="timeline-content">
+          <h4>JavaScript Functionality</h4>
+          <p>Added mobile menu toggle, form validation, smooth scroll, lazy image loading, scroll animations, and performance monitoring</p>
+        </div>
+      </div>
+
+      <div class="timeline-item">
+        <div class="timeline-marker">5</div>
+        <div class="timeline-content">
+          <h4>Testing & Optimization</h4>
+          <p>Tested across devices and browsers, validated HTML/CSS, optimized images (WebP format), ensured accessibility compliance</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════ SLIDE 4 – Information Architecture ══════════ -->
+  <div class="slide slide-4">
+    <h2>Information <span>Architecture</span></h2>
+
+    <div class="info-box">
+      <h4>Site Structure</h4>
+      <p>The website is organized into 5 main pages with clear hierarchy and logical navigation flow</p>
+    </div>
+
+    <div class="three-col">
+      <div class="card">
+        <h3>🏠 Home Page</h3>
+        <p>Hero section, about Beskydy, features (hiking, cycling, culture), top attractions preview, upcoming events, CTA sections</p>
+      </div>
+
+      <div class="card">
+        <h3>🏔️ Attractions</h3>
+        <p>Main attractions with detailed info (Lysá Hora, Pustevny, Radhošť), additional destinations, GPS coordinates, amenities</p>
+      </div>
+
+      <div class="card">
+        <h3>🏨 Accommodation</h3>
+        <p>Hotels, pensions, cottages, apartments with pricing, ratings, amenities, booking information</p>
+      </div>
+
+      <div class="card">
+        <h3>⛷️ Activities</h3>
+        <p>Summer activities (hiking, biking, water), winter activities (skiing, sledding), cultural events, gastronomy</p>
+      </div>
+
+      <div class="card">
+        <h3>📬 Contact</h3>
+        <p>Contact form, office info, emergency contacts, transportation guide, location map, FAQs</p>
+      </div>
+
+      <div class="card">
+        <h3>🧭 Navigation</h3>
+        <p>Sticky header, mobile hamburger menu, footer links, social media, skip-to-content link</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════ SLIDE 5 – Usability ══════════ -->
+  <div class="slide slide-5">
+    <h2>Usability <span>Features</span></h2>
+
+    <div class="two-col">
+      <div>
+        <div class="section-title">Design Principles</div>
+        <ul class="clean">
+          <li><strong>Consistency:</strong> Uniform design across all pages with consistent navigation, colors, and typography</li>
+          <li><strong>Clarity:</strong> Clear headings, readable fonts (16px base), high contrast text</li>
+          <li><strong>Feedback:</strong> Hover states on buttons/links, form validation messages, loading indicators</li>
+          <li><strong>Simplicity:</strong> Clean layout, minimal distractions, focused content</li>
+          <li><strong>Efficiency:</strong> Quick access to information, fast page loads, optimized images</li>
+        </ul>
+
+        <div class="section-title">Mobile-First Approach</div>
+        <ul class="clean">
+          <li>Responsive breakpoints: 480px, 768px, 1024px</li>
+          <li>Touch-friendly buttons (minimum 44×44px)</li>
+          <li>Hamburger menu for mobile navigation</li>
+          <li>Optimized images for different screen sizes</li>
+        </ul>
+      </div>
+
+      <div>
+        <div class="section-title">Interactive Elements</div>
+        <div class="badge-grid">
+          <div class="badge">
+            <div class="icon">📱</div>
+            <p>Mobile Menu</p>
+          </div>
+          <div class="badge">
+            <div class="icon">📝</div>
+            <p>Form Validation</p>
+          </div>
+          <div class="badge">
+            <div class="icon">⬆️</div>
+            <p>Scroll to Top</p>
+          </div>
+          <div class="badge">
+            <div class="icon">✨</div>
+            <p>Smooth Scroll</p>
+          </div>
+          <div class="badge">
+            <div class="icon">🖼️</div>
+            <p>Lazy Loading</p>
+          </div>
+          <div class="badge">
+            <div class="icon">🎬</div>
+            <p>Scroll Animations</p>
+          </div>
+        </div>
+
+        <div class="section-title">User Experience</div>
+        <ul class="clean">
+          <li>Fast loading time (optimized WebP images)</li>
+          <li>Intuitive navigation structure</li>
+          <li>Clear call-to-action buttons</li>
+          <li>Helpful error messages</li>
+          <li>Search engine friendly URLs</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════ SLIDE 6 – Accessibility ══════════ -->
+  <div class="slide slide-6">
+    <h2>Accessibility <span>Standards</span></h2>
+
+    <div class="info-box">
+      <h4>WCAG 2.1 Compliance</h4>
+      <p>The website follows Web Content Accessibility Guidelines to ensure all users can access and use the content</p>
+    </div>
+
+    <div class="two-col">
+      <div>
+        <div class="section-title">Semantic HTML</div>
+        <ul class="clean">
+          <li>Proper heading hierarchy (h1 → h2 → h3)</li>
+          <li>Semantic elements (header, nav, main, section, footer)</li>
+          <li>ARIA labels and roles for screen readers</li>
+          <li>Alt text for all images</li>
+          <li>Skip-to-content link for keyboard users</li>
+        </ul>
+
+        <div class="section-title">Keyboard Navigation</div>
+        <ul class="clean">
+          <li>All interactive elements accessible via Tab key</li>
+          <li>Focus indicators (3px outline, high contrast)</li>
+          <li>Logical tab order</li>
+          <li>No keyboard traps</li>
+        </ul>
+
+        <div class="section-title">Structured Data</div>
+        <ul class="clean">
+          <li>Microformats (hCard, hProduct, vevent)</li>
+          <li>Meta tags for SEO and social media</li>
+          <li>Open Graph protocol</li>
+        </ul>
+      </div>
+
+      <div>
+        <div class="section-title">Visual Accessibility</div>
+        <ul class="clean">
+          <li>High contrast ratios (WCAG AA compliant)</li>
+          <li>Readable font sizes (minimum 16px)</li>
+          <li>Sufficient line spacing (1.6 line-height)</li>
+          <li>Color not sole indicator of information</li>
+          <li>Scalable text (responsive units: rem, em)</li>
+        </ul>
+
+        <div class="section-title">Form Accessibility</div>
+        <ul class="clean">
+          <li>Labels associated with form inputs</li>
+          <li>Required field indicators</li>
+          <li>Clear error messages</li>
+          <li>Fieldset and legend for grouping</li>
+          <li>Autocomplete attributes</li>
+        </ul>
+
+        <div class="section-title">Testing Tools Used</div>
+        <ul class="clean">
+          <li>W3C HTML/CSS Validators</li>
+          <li>WAVE accessibility checker</li>
+          <li>Lighthouse audit (Chrome DevTools)</li>
+          <li>Screen reader testing</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════ SLIDE 7 – Screenshots & Examples ══════════ -->
+  <div class="slide slide-7">
+    <h2>Screenshots & <span>Examples</span></h2>
+
+    <div class="screenshot-grid">
+      <div class="screenshot">
+        <div class="screenshot-placeholder">🏠</div>
+        <p>Homepage Hero Section</p>
+      </div>
+      <div class="screenshot">
+        <div class="screenshot-placeholder">🏔️</div>
+        <p>Attractions Grid Layout</p>
+      </div>
+      <div class="screenshot">
+        <div class="screenshot-placeholder">🏨</div>
+        <p>Accommodation Cards</p>
+      </div>
+      <div class="screenshot">
+        <div class="screenshot-placeholder">📱</div>
+        <p>Mobile Responsive Design</p>
+      </div>
+    </div>
+
+    <div class="section-title" style="margin-top:28px;">Technical Implementation Examples</div>
+
+    <div class="two-col">
+      <div class="info-box">
+        <h4>CSS Grid Layout</h4>
+        <p>Used for attraction cards, accommodation grid, and feature sections. Automatically adapts to different screen sizes with auto-fit and minmax.</p>
+      </div>
+
+      <div class="info-box" style="background: rgba(96,165,250,0.08); border-left-color: var(--blue);">
+        <h4 style="color: var(--blue);">CSS Flexbox</h4>
+        <p>Implemented in navigation menu, hero content centering, footer layout, and card internal structure for alignment.</p>
+      </div>
+
+      <div class="info-box" style="background: rgba(192,132,252,0.08); border-left-color: var(--purple);">
+        <h4 style="color: var(--purple);">CSS Custom Properties</h4>
+        <p>Color scheme, spacing scale, typography, and transitions defined as CSS variables for easy theming and maintenance.</p>
+      </div>
+
+      <div class="info-box" style="background: rgba(251,146,60,0.08); border-left-color: var(--orange);">
+        <h4 style="color: var(--orange);">JavaScript Features</h4>
+        <p>Intersection Observer API for lazy loading and scroll animations, form validation with regex, smooth scroll behavior.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════ SLIDE 8 – Conclusion ══════════ -->
+  <div class="slide slide-8">
+    <h2>Conclusion</h2>
+
+    <div class="info-box">
+      <h4>Project Summary</h4>
+      <p>
+        Successfully created a comprehensive tourism website for the Beskydy region that combines beautiful design,
+        robust functionality, and accessibility standards. The project demonstrates modern web development practices
+        and provides real value to potential visitors.
+      </p>
+    </div>
+
+    <div class="two-col">
+      <div>
+        <div class="section-title">Achievements</div>
+        <ul class="clean">
+          <li>5 fully functional pages with rich content</li>
+          <li>100% responsive across all devices</li>
+          <li>WCAG 2.1 accessibility compliance</li>
+          <li>Semantic HTML5 and modern CSS3</li>
+          <li>Interactive JavaScript features</li>
+          <li>SEO optimized with meta tags</li>
+          <li>Cross-browser compatible</li>
+          <li>Fast loading performance</li>
+        </ul>
+      </div>
+
+      <div>
+        <div class="section-title">Technologies Used</div>
+        <ul class="clean">
+          <li>HTML5 (semantic elements, microformats)</li>
+          <li>CSS3 (Grid, Flexbox, custom properties)</li>
+          <li>Vanilla JavaScript (no frameworks)</li>
+          <li>WebP image format for optimization</li>
+          <li>Responsive design principles</li>
+          <li>Git version control</li>
+        </ul>
+
+        <div class="section-title">Future Enhancements</div>
+        <ul class="clean">
+          <li>Backend integration (Node.js + PostgreSQL)</li>
+          <li>Real-time booking system</li>
+          <li>Multilingual support (Czech, English)</li>
+          <li>User reviews and ratings</li>
+          <li>Interactive map with markers</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="info-box" style="margin-top:24px; background: rgba(74,222,128,0.1); border-left-color: var(--green);">
+      <h4>Thank You</h4>
+      <p>Questions and feedback welcome</p>
+    </div>
+  </div>
+
+</div><!-- /slides -->
+
+<!-- University label -->
+<div class="university">PEF CZU Prague</div>
+
+<!-- Slide number -->
+<div class="slide-number" id="slideNum">1 / 8</div>
+
+<!-- Navigation -->
+<div class="nav">
+  <button id="prevBtn" onclick="changeSlide(-1)" disabled>← Prev</button>
+  <div class="dots" id="dots"></div>
+  <button id="nextBtn" onclick="changeSlide(1)">Next →</button>
+</div>
+
+<script>
+  let current = 0;
+  const slides = document.querySelectorAll('.slide');
+  const total  = slides.length;
+  const dotsEl = document.getElementById('dots');
+
+  // Build dots
+  slides.forEach((_, i) => {
+    const d = document.createElement('div');
+    d.className = 'dot' + (i === 0 ? ' active' : '');
+    d.onclick = () => goTo(i);
+    dotsEl.appendChild(d);
+  });
+
+  function goTo(n) {
+    slides[current].classList.remove('active');
+    dotsEl.children[current].classList.remove('active');
+    current = n;
+    slides[current].classList.add('active');
+    dotsEl.children[current].classList.add('active');
+    document.getElementById('slideNum').textContent = (current + 1) + ' / ' + total;
+    document.getElementById('prevBtn').disabled = current === 0;
+    document.getElementById('nextBtn').disabled = current === total - 1;
+  }
+
+  function changeSlide(dir) { goTo(current + dir); }
+
+  // Keyboard navigation
+  document.addEventListener('keydown', e => {
+    if (e.key === 'ArrowRight' || e.key === 'ArrowDown')  changeSlide(1);
+    if (e.key === 'ArrowLeft'  || e.key === 'ArrowUp')    changeSlide(-1);
+  });
+</script>
+
+</body>
+</html>

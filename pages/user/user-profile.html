@@ -1,0 +1,360 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="User profile and booking history">
+    <title>My Profile | Beskydy Region</title>
+    <link rel="stylesheet" href="../../css/style.css">
+    <link rel="icon" type="image/x-icon" href="images/favicon.ico">
+</head>
+<body>
+    <a href="#main-content" class="skip-link">Skip to main content</a>
+
+    <header class="site-header" role="banner">
+        <div class="header-container">
+            <div class="site-branding">
+                <a href="../../index.html" class="logo">🏔️ Beskydy Region</a>
+                <p class="tagline">Discover mountain beauty</p>
+            </div>
+            <nav class="main-navigation" role="navigation">
+                <button class="nav-toggle" aria-label="Toggle menu">☰</button>
+                <ul class="nav-menu">
+                    <li><a href="../../index.html">Home</a></li>
+                    <li><a href="../public/about.html">About</a></li>
+                    <li><a href="../public/attractions.html">Attractions</a></li>
+                    <li><a href="../public/accommodation.html">Accommodation</a></li>
+                    <li><a href="../public/activities.html">Activities</a></li>
+                    <li><a href="../user/user-profile.html" class="active">My Profile</a></li>
+                    <li><a href="#" onclick="logout()">Logout</a></li>
+                </ul>
+            </nav>
+        </div>
+        <div class="student-notice">
+            <p><strong>Student Project</strong> | Created by PEF CZU Prague students for educational purposes only.</p>
+        </div>
+    </header>
+
+    <main id="main-content" class="profile-page">
+        <div class="container">
+            <h1>My Profile</h1>
+            <p class="subtitle">Manage your account and view booking history</p>
+
+            <div class="profile-container">
+                <!-- Profile Sidebar -->
+                <aside class="profile-sidebar">
+                    <div class="profile-card">
+                        <div class="profile-avatar">👤</div>
+                        <h2 id="user-name">John Doe</h2>
+                        <p id="user-email">john.doe@email.com</p>
+                        <p class="user-status">Regular User</p>
+                    </div>
+
+                    <nav class="profile-nav">
+                        <ul>
+                            <li><a href="#profile-info" class="active">Profile Information</a></li>
+                            <li><a href="#booking-history">Booking History</a></li>
+                            <li><a href="#favorites">Saved Favorites</a></li>
+                            <li><a href="#settings">Account Settings</a></li>
+                        </ul>
+                    </nav>
+                </aside>
+
+                <!-- Main Profile Content -->
+                <div class="profile-main">
+                    <!-- Profile Information Section -->
+                    <section id="profile-info" class="profile-section">
+                        <h2>Profile Information</h2>
+
+                        <form class="profile-form">
+                            <div class="form-group">
+                                <label for="full-name">Full Name</label>
+                                <input type="text" id="full-name" value="John Doe">
+                            </div>
+
+                            <div class="form-group">
+                                <label for="email">Email Address</label>
+                                <input type="email" id="email" value="john.doe@email.com">
+                            </div>
+
+                            <div class="form-group">
+                                <label for="phone">Phone Number</label>
+                                <input type="tel" id="phone" value="+420 123 456 789">
+                            </div>
+
+                            <div class="form-group">
+                                <label for="country">Country</label>
+                                <select id="country">
+                                    <option value="CZ" selected>Czech Republic</option>
+                                    <option value="SK">Slovakia</option>
+                                    <option value="PL">Poland</option>
+                                    <option value="other">Other</option>
+                                </select>
+                            </div>
+
+                            <button type="submit" class="cta-button">Save Changes</button>
+                        </form>
+                    </section>
+
+                    <!-- Booking History Section -->
+                    <section id="booking-history" class="profile-section">
+                        <h2>Booking History</h2>
+
+                        <div class="booking-list">
+                            <!-- Booking 1 -->
+                            <div class="booking-item">
+                                <div class="booking-header">
+                                    <h3>Hotel Beskyd</h3>
+                                    <span class="booking-status status-confirmed">Confirmed</span>
+                                </div>
+                                <div class="booking-details">
+                                    <p><strong>Dates:</strong> June 15 - June 18, 2025</p>
+                                    <p><strong>Guests:</strong> 2 adults</p>
+                                    <p><strong>Total:</strong> $270</p>
+                                    <p><strong>Booking ID:</strong> BES-2025-001</p>
+                                </div>
+                                <div class="booking-actions">
+                                    <button class="btn-small">View Details</button>
+                                    <button class="btn-small btn-secondary">Cancel</button>
+                                </div>
+                            </div>
+
+                            <!-- Booking 2 -->
+                            <div class="booking-item">
+                                <div class="booking-header">
+                                    <h3>Mountain Bike Tour</h3>
+                                    <span class="booking-status status-completed">Completed</span>
+                                </div>
+                                <div class="booking-details">
+                                    <p><strong>Date:</strong> May 20, 2025</p>
+                                    <p><strong>Participants:</strong> 2</p>
+                                    <p><strong>Total:</strong> $80</p>
+                                    <p><strong>Booking ID:</strong> BES-2025-002</p>
+                                </div>
+                                <div class="booking-actions">
+                                    <button class="btn-small">Leave Review</button>
+                                </div>
+                            </div>
+
+                            <!-- No bookings message (hidden by default) -->
+                            <div class="no-bookings" style="display:none;">
+                                <p>You don't have any bookings yet.</p>
+                                <a href="../booking/booking.html" class="cta-button">Make a Booking</a>
+                            </div>
+                        </div>
+                    </section>
+
+                    <!-- Favorites Section -->
+                    <section id="favorites" class="profile-section">
+                        <h2>Saved Favorites</h2>
+
+                        <div class="favorites-grid">
+                            <div class="favorite-card">
+                                <img src="images/lysa-hora.webp" alt="Lysá Hora">
+                                <h3>Lysá Hora</h3>
+                                <p>Highest peak in Beskydy</p>
+                                <button class="btn-small btn-remove">Remove</button>
+                            </div>
+
+                            <div class="favorite-card">
+                                <img src="images/hotel-besky.jpeg" alt="Hotel Beskyd">
+                                <h3>Hotel Beskyd</h3>
+                                <p>4-star luxury hotel</p>
+                                <button class="btn-small btn-remove">Remove</button>
+                            </div>
+
+                            <div class="favorite-card">
+                                <img src="images/Pustevny.webp" alt="Pustevny">
+                                <h3>Pustevny</h3>
+                                <p>Traditional architecture</p>
+                                <button class="btn-small btn-remove">Remove</button>
+                            </div>
+                        </div>
+                    </section>
+
+                    <!-- Account Settings Section -->
+                    <section id="settings" class="profile-section">
+                        <h2>Account Settings</h2>
+
+                        <h3>Change Password</h3>
+                        <form class="settings-form">
+                            <div class="form-group">
+                                <label for="current-password">Current Password</label>
+                                <input type="password" id="current-password">
+                            </div>
+
+                            <div class="form-group">
+                                <label for="new-password">New Password</label>
+                                <input type="password" id="new-password">
+                            </div>
+
+                            <div class="form-group">
+                                <label for="confirm-new-password">Confirm New Password</label>
+                                <input type="password" id="confirm-new-password">
+                            </div>
+
+                            <button type="submit" class="cta-button">Update Password</button>
+                        </form>
+
+                        <h3 style="margin-top: 2rem;">Email Preferences</h3>
+                        <div class="checkbox-group">
+                            <label>
+                                <input type="checkbox" checked>
+                                Receive booking confirmations
+                            </label>
+                            <label>
+                                <input type="checkbox" checked>
+                                Receive newsletter and special offers
+                            </label>
+                            <label>
+                                <input type="checkbox">
+                                Receive event notifications
+                            </label>
+                        </div>
+
+                        <h3 style="margin-top: 2rem;">Danger Zone</h3>
+                        <button class="btn-danger">Delete Account</button>
+                    </section>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <footer class="site-footer" role="contentinfo">
+        <div class="footer-content">
+            <div class="footer-section">
+                <h3>About Beskydy</h3>
+                <p>Discover the beauty of the Beskydy Mountains - your perfect destination for nature and adventure.</p>
+            </div>
+
+            <div class="footer-section">
+                <h3>Quick Links</h3>
+                <ul class="footer-links">
+                    <li><a href="../../index.html">Home</a></li>
+                    <li><a href="../public/about.html">About</a></li>
+                    <li><a href="../booking/booking.html">Booking</a></li>
+                    <li><a href="../public/contact.html">Contact</a></li>
+                </ul>
+            </div>
+
+            <div class="footer-section">
+                <h3>Contact</h3>
+                <p>📍 Rožnov pod Radhoštěm, Czech Republic</p>
+                <p>📧 info@beskydy-region.cz</p>
+                <p>📞 +420 571 111 222</p>
+            </div>
+        </div>
+
+        <div class="footer-bottom">
+            <p>&copy; 2025 Beskydy Region Tourism. Student Project - PEF CZU Prague</p>
+        </div>
+    </footer>
+
+    <script src="../../js/main.js"></script>
+    <script src="../../js/auth.js"></script>
+    <script>
+        // Simple logout function
+        function logout() {
+            if (confirm('Are you sure you want to logout?')) {
+                localStorage.removeItem('user');
+                window.location.href = 'login.html';
+            }
+        }
+
+        // Check if user is logged in and load bookings
+        window.addEventListener('DOMContentLoaded', function() {
+            const user = checkAuth();
+            if (!user) {
+                // Redirect to login if not logged in
+                showMessage('Please login to access your profile', 'error');
+                setTimeout(() => {
+                    window.location.href = 'login.html';
+                }, 1500);
+            } else {
+                // Display user info
+                document.querySelector('.profile-sidebar h2').textContent = user.name || 'User';
+
+                // Fill in user profile form
+                if (document.getElementById('full-name')) {
+                    document.getElementById('full-name').value = user.name || '';
+                    document.getElementById('email').value = user.email || '';
+                    document.getElementById('phone').value = user.phone || '';
+                }
+
+                // Load and display real bookings from localStorage
+                loadUserBookings();
+            }
+        });
+
+        // Function to load user bookings from localStorage
+        function loadUserBookings() {
+            const bookings = JSON.parse(localStorage.getItem('bookings') || '[]');
+            const bookingList = document.querySelector('.booking-list');
+
+            if (bookings.length === 0) {
+                bookingList.innerHTML = `
+                    <div style="text-align: center; padding: 40px;">
+                        <p style="font-size: 1.1em; color: #666;">No bookings yet.</p>
+                        <p><a href="../booking/booking.html" class="cta-button" style="display: inline-block; margin-top: 20px;">Make a Booking</a></p>
+                    </div>
+                `;
+                return;
+            }
+
+            // Display bookings
+            bookingList.innerHTML = bookings.map((booking, index) => {
+                const itemName = booking.type === 'accommodation' ? booking.accommodation : booking.activity;
+                const dates = booking.checkIn && booking.checkOut
+                    ? `${new Date(booking.checkIn).toLocaleDateString()} - ${new Date(booking.checkOut).toLocaleDateString()}`
+                    : new Date(booking.createdAt).toLocaleDateString();
+
+                return `
+                    <div class="booking-item">
+                        <div class="booking-header">
+                            <h3>${itemName || 'Booking'}</h3>
+                            <span class="booking-status status-${booking.status || 'confirmed'}">${booking.status || 'Confirmed'}</span>
+                        </div>
+                        <div class="booking-details">
+                            <p><strong>Type:</strong> ${booking.type === 'accommodation' ? 'Accommodation' : 'Activity'}</p>
+                            <p><strong>Dates:</strong> ${dates}</p>
+                            ${booking.guests ? `<p><strong>Guests:</strong> ${booking.guests}</p>` : ''}
+                            <p><strong>Booking ID:</strong> BES-${booking.id}</p>
+                            ${booking.specialRequests ? `<p><strong>Special Requests:</strong> ${booking.specialRequests}</p>` : ''}
+                        </div>
+                        <div class="booking-actions">
+                            <button class="btn-small" onclick="viewBookingDetails(${booking.id})">View Details</button>
+                            <button class="btn-small btn-secondary" onclick="cancelBooking(${booking.id})">Cancel</button>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        // Function to view booking details
+        function viewBookingDetails(bookingId) {
+            const bookings = JSON.parse(localStorage.getItem('bookings') || '[]');
+            const booking = bookings.find(b => b.id === bookingId);
+
+            if (booking) {
+                alert(`Booking Details:\n\nID: BES-${booking.id}\nType: ${booking.type}\nItem: ${booking.accommodation || booking.activity}\nDates: ${booking.checkIn} to ${booking.checkOut}\nGuests: ${booking.guests}\nContact: ${booking.email}\nPhone: ${booking.phone}\nSpecial Requests: ${booking.specialRequests || 'None'}`);
+            }
+        }
+
+        // Function to cancel booking
+        function cancelBooking(bookingId) {
+            if (confirm('Are you sure you want to cancel this booking?')) {
+                let bookings = JSON.parse(localStorage.getItem('bookings') || '[]');
+                bookings = bookings.filter(b => b.id !== bookingId);
+                localStorage.setItem('bookings', JSON.stringify(bookings));
+
+                showMessage('Booking cancelled successfully', 'success');
+
+                // Reload bookings
+                setTimeout(() => {
+                    loadUserBookings();
+                }, 1000);
+            }
+        }
+    </script>
+</body>
+</html>

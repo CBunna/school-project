@@ -1,0 +1,494 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Admin dashboard for managing Beskydy Region website">
+    <title>Admin Dashboard | Beskydy Region</title>
+    <link rel="stylesheet" href="../../css/style.css">
+    <link rel="icon" type="image/x-icon" href="images/favicon.ico">
+</head>
+<body>
+    <a href="#main-content" class="skip-link">Skip to main content</a>
+
+    <header class="site-header" role="banner">
+        <div class="header-container">
+            <div class="site-branding">
+                <a href="../../index.html" class="logo">🏔️ Beskydy Admin</a>
+                <p class="tagline">Administration Panel</p>
+            </div>
+            <nav class="main-navigation" role="navigation">
+                <button class="nav-toggle" aria-label="Toggle menu">☰</button>
+                <ul class="nav-menu">
+                    <li><a href="../admin/admin-dashboard.html" class="active">Dashboard</a></li>
+                    <li><a href="../../index.html">View Website</a></li>
+                    <li><a href="#" onclick="logout()">Logout</a></li>
+                </ul>
+            </nav>
+        </div>
+        <div class="student-notice" style="background: #ff6b35;">
+            <p><strong>Admin</strong> | Manage website content and bookings</p>
+        </div>
+    </header>
+
+    <main id="main-content" class="admin-page">
+        <div class="container">
+            <h1>Admin Dashboard</h1>
+            <p class="subtitle">Welcome back, Admin! Manage your website content below.</p>
+
+            <!-- Statistics Cards -->
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-icon">📊</div>
+                    <div class="stat-info">
+                        <h3>Total Bookings</h3>
+                        <p class="stat-number">45</p>
+                        <p class="stat-change">+12% this month</p>
+                    </div>
+                </div>
+
+                <div class="stat-card">
+                    <div class="stat-icon">👥</div>
+                    <div class="stat-info">
+                        <h3>Registered Users</h3>
+                        <p class="stat-number">128</p>
+                        <p class="stat-change">+8 new users</p>
+                    </div>
+                </div>
+
+                <div class="stat-card">
+                    <div class="stat-icon">🏨</div>
+                    <div class="stat-info">
+                        <h3>Accommodations</h3>
+                        <p class="stat-number">4</p>
+                        <p class="stat-change">Active listings</p>
+                    </div>
+                </div>
+
+                <div class="stat-card">
+                    <div class="stat-icon">🏔️</div>
+                    <div class="stat-info">
+                        <h3>Attractions</h3>
+                        <p class="stat-number">6</p>
+                        <p class="stat-change">Published</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Admin Tabs -->
+            <div class="admin-tabs">
+                <button class="tab-button active" onclick="showTab('manage-bookings')">Manage Bookings</button>
+                <button class="tab-button" onclick="showTab('manage-content')">Manage Content</button>
+                <button class="tab-button" onclick="showTab('manage-users')">Manage Users</button>
+            </div>
+
+            <!-- Manage Bookings Tab -->
+            <div id="manage-bookings" class="tab-content active">
+                <h2>Recent Bookings</h2>
+
+                <table class="admin-table">
+                    <thead>
+                        <tr>
+                            <th>Booking ID</th>
+                            <th>Customer</th>
+                            <th>Type</th>
+                            <th>Dates</th>
+                            <th>Total</th>
+                            <th>Status</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>BES-001</td>
+                            <td>John Doe</td>
+                            <td>Hotel Beskyd</td>
+                            <td>Jun 15-18, 2025</td>
+                            <td>$270</td>
+                            <td><span class="status-badge status-confirmed">Confirmed</span></td>
+                            <td>
+                                <button class="btn-small">View</button>
+                                <button class="btn-small btn-danger">Cancel</button>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>BES-002</td>
+                            <td>Jane Smith</td>
+                            <td>Mountain Cottage</td>
+                            <td>Jul 10-15, 2025</td>
+                            <td>$375</td>
+                            <td><span class="status-badge status-pending">Pending</span></td>
+                            <td>
+                                <button class="btn-small">View</button>
+                                <button class="btn-small btn-secondary">Confirm</button>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>BES-003</td>
+                            <td>Mike Johnson</td>
+                            <td>Ski Lesson</td>
+                            <td>Jan 15, 2026</td>
+                            <td>$100</td>
+                            <td><span class="status-badge status-confirmed">Confirmed</span></td>
+                            <td>
+                                <button class="btn-small">View</button>
+                                <button class="btn-small btn-danger">Cancel</button>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Manage Content Tab -->
+            <div id="manage-content" class="tab-content">
+                <h2>Manage Website Content</h2>
+
+                <div class="content-actions">
+                    <button class="cta-button" onclick="showAddForm('attraction')">+ Add Attraction</button>
+                    <button class="cta-button" onclick="showAddForm('accommodation')">+ Add Accommodation</button>
+                    <button class="cta-button" onclick="showAddForm('event')">+ Add Event</button>
+                </div>
+
+                <!-- Add Attraction Form (hidden by default) -->
+                <div id="add-attraction-form" class="admin-form" style="display:none;">
+                    <h3>Add New Attraction</h3>
+                    <form id="attraction-form">
+                        <div class="form-group">
+                            <label for="attraction-name">Attraction Name *</label>
+                            <input type="text" id="attraction-name" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="attraction-description">Description *</label>
+                            <textarea id="attraction-description" rows="4" required></textarea>
+                        </div>
+
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="attraction-category">Category *</label>
+                                <select id="attraction-category" required>
+                                    <option value="">Select category</option>
+                                    <option value="nature">Nature</option>
+                                    <option value="culture">Culture</option>
+                                    <option value="adventure">Adventure</option>
+                                </select>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="attraction-difficulty">Difficulty *</label>
+                                <select id="attraction-difficulty" required>
+                                    <option value="">Select difficulty</option>
+                                    <option value="easy">Easy</option>
+                                    <option value="moderate">Moderate</option>
+                                    <option value="hard">Hard</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="attraction-gps">GPS Coordinates</label>
+                            <input type="text" id="attraction-gps" placeholder="49.5487° N, 18.2466° E">
+                        </div>
+
+                        <div class="form-group">
+                            <label for="attraction-photo">Attraction Photo *</label>
+                            <input type="file" id="attraction-photo" accept="image/*" required>
+                            <small style="color: #666; display: block; margin-top: 0.5rem;">
+                                Accepted formats: JPG, PNG, WebP. Max size: 5MB
+                            </small>
+                        </div>
+
+                        <div class="form-group" id="photo-preview-container" style="display: none;">
+                            <label>Photo Preview</label>
+                            <img id="photo-preview" style="max-width: 300px; max-height: 200px; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
+                        </div>
+
+                        <div class="form-buttons">
+                            <button type="submit" class="cta-button">Save Attraction</button>
+                            <button type="button" class="btn-secondary" onclick="hideAddForm()">Cancel</button>
+                        </div>
+                    </form>
+                </div>
+
+                <!-- Existing Attractions List -->
+                <h3 style="margin-top: 2rem;">Current Attractions</h3>
+                <div class="content-list" id="attractions-list">
+                    <div class="content-item">
+                        <h4>Lysá Hora</h4>
+                        <p>Highest peak in Beskydy Mountains (1,323 m)</p>
+                        <div class="content-actions">
+                            <button class="btn-small">Edit</button>
+                            <button class="btn-small btn-danger">Delete</button>
+                        </div>
+                    </div>
+
+                    <div class="content-item">
+                        <h4>Pustevny</h4>
+                        <p>Mountain saddle with unique wooden architecture</p>
+                        <div class="content-actions">
+                            <button class="btn-small">Edit</button>
+                            <button class="btn-small btn-danger">Delete</button>
+                        </div>
+                    </div>
+
+                    <div class="content-item">
+                        <h4>Radhošť</h4>
+                        <p>Sacred mountain with chapel</p>
+                        <div class="content-actions">
+                            <button class="btn-small">Edit</button>
+                            <button class="btn-small btn-danger">Delete</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Manage Users Tab -->
+            <div id="manage-users" class="tab-content">
+                <h2>Registered Users</h2>
+
+                <table class="admin-table">
+                    <thead>
+                        <tr>
+                            <th>User ID</th>
+                            <th>Name</th>
+                            <th>Email</th>
+                            <th>User Type</th>
+                            <th>Registered</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>001</td>
+                            <td>John Doe</td>
+                            <td>john.doe@email.com</td>
+                            <td><span class="user-badge user-regular">Regular</span></td>
+                            <td>Jan 15, 2025</td>
+                            <td>
+                                <button class="btn-small">View</button>
+                                <button class="btn-small btn-danger">Disable</button>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>002</td>
+                            <td>Jane Smith</td>
+                            <td>jane.smith@email.com</td>
+                            <td><span class="user-badge user-regular">Regular</span></td>
+                            <td>Feb 10, 2025</td>
+                            <td>
+                                <button class="btn-small">View</button>
+                                <button class="btn-small btn-danger">Disable</button>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>003</td>
+                            <td>Admin User</td>
+                            <td>admin@beskydy.cz</td>
+                            <td><span class="user-badge user-admin">Admin</span></td>
+                            <td>Jan 1, 2025</td>
+                            <td>
+                                <button class="btn-small">View</button>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </main>
+
+    <footer class="site-footer" role="contentinfo">
+        <div class="footer-content">
+            <div class="footer-section">
+                <h3>Admin Dashboard</h3>
+                <p>Manage Beskydy Region Tourism website content and bookings.</p>
+            </div>
+
+            <div class="footer-section">
+                <h3>Quick Actions</h3>
+                <ul class="footer-links">
+                    <li><a href="../admin/admin-dashboard.html">Dashboard</a></li>
+                    <li><a href="../../index.html">View Website</a></li>
+                    <li><a href="#" onclick="logout()">Logout</a></li>
+                </ul>
+            </div>
+
+            <div class="footer-section">
+                <h3>Support</h3>
+                <p>📧 admin@beskydy-region.cz</p>
+                <p>📞 +420 571 111 222</p>
+            </div>
+        </div>
+
+        <div class="footer-bottom">
+            <p>&copy; 2025 Beskydy Region Tourism. Admin Panel - PEF CZU Prague</p>
+        </div>
+    </footer>
+
+    <script src="../../js/main.js"></script>
+    <script src="../../js/auth.js"></script>
+    <script>
+        // Simple tab switching
+        function showTab(tabName) {
+            // Hide all tabs
+            const tabs = document.querySelectorAll('.tab-content');
+            tabs.forEach(tab => tab.classList.remove('active'));
+
+            // Remove active class from all buttons
+            const buttons = document.querySelectorAll('.tab-button');
+            buttons.forEach(btn => btn.classList.remove('active'));
+
+            // Show selected tab
+            document.getElementById(tabName).classList.add('active');
+
+            // Add active class to clicked button
+            event.target.classList.add('active');
+        }
+
+        // Show add form
+        function showAddForm(type) {
+            document.getElementById('add-attraction-form').style.display = 'block';
+        }
+
+        // Hide add form
+        function hideAddForm() {
+            document.getElementById('add-attraction-form').style.display = 'none';
+        }
+
+        // Logout function
+        function logout() {
+            if (confirm('Are you sure you want to logout?')) {
+                localStorage.removeItem('user');
+                window.location.href = 'login.html';
+            }
+        }
+
+        // Photo preview functionality
+        document.addEventListener('DOMContentLoaded', function() {
+            const photoInput = document.getElementById('attraction-photo');
+            const photoPreview = document.getElementById('photo-preview');
+            const previewContainer = document.getElementById('photo-preview-container');
+
+            if (photoInput) {
+                photoInput.addEventListener('change', function(e) {
+                    const file = e.target.files[0];
+
+                    if (file) {
+                        // Validate file size (5MB max)
+                        if (file.size > 5 * 1024 * 1024) {
+                            alert('File is too large! Maximum size is 5MB.');
+                            photoInput.value = '';
+                            previewContainer.style.display = 'none';
+                            return;
+                        }
+
+                        // Validate file type
+                        if (!file.type.startsWith('image/')) {
+                            alert('Please select an image file!');
+                            photoInput.value = '';
+                            previewContainer.style.display = 'none';
+                            return;
+                        }
+
+                        // Show preview
+                        const reader = new FileReader();
+                        reader.onload = function(e) {
+                            photoPreview.src = e.target.result;
+                            previewContainer.style.display = 'block';
+                        };
+                        reader.readAsDataURL(file);
+                    } else {
+                        previewContainer.style.display = 'none';
+                    }
+                });
+            }
+
+            // Handle attraction form submission
+            const attractionForm = document.getElementById('attraction-form');
+            if (attractionForm) {
+                attractionForm.addEventListener('submit', async function(e) {
+                    e.preventDefault();
+
+                    const name = document.getElementById('attraction-name').value;
+                    const description = document.getElementById('attraction-description').value;
+                    const category = document.getElementById('attraction-category').value;
+                    const location = document.getElementById('attraction-gps').value;
+
+                    // Create attraction data
+                    const attractionData = {
+                        name: name,
+                        description: description,
+                        category: category,
+                        location: location || 'Beskydy Region',
+                        image_url: '../images/default-attraction.jpg', // Default image
+                        rating: 4.5
+                    };
+
+                    // For now, save to localStorage (demo mode)
+                    const attractions = JSON.parse(localStorage.getItem('customAttractions') || '[]');
+                    attractionData.id = 'custom-' + Date.now();
+                    attractions.push(attractionData);
+                    localStorage.setItem('customAttractions', JSON.stringify(attractions));
+
+                    // Show success message
+                    alert(`✅ Attraction "${name}" has been added successfully!`);
+
+                    // Reset form and hide
+                    attractionForm.reset();
+                    document.getElementById('add-attraction-form').style.display = 'none';
+                    document.getElementById('photo-preview-container').style.display = 'none';
+
+                    // Refresh the page to show the new attraction
+                    location.reload();
+                });
+            }
+        });
+
+        // Load custom attractions into the list
+        function loadCustomAttractions() {
+            const customAttractions = JSON.parse(localStorage.getItem('customAttractions') || '[]');
+            const attractionsList = document.getElementById('attractions-list');
+
+            if (customAttractions.length > 0 && attractionsList) {
+                customAttractions.forEach(attraction => {
+                    const attractionItem = document.createElement('div');
+                    attractionItem.className = 'content-item';
+                    attractionItem.innerHTML = `
+                        <h4>${attraction.name}</h4>
+                        <p>${attraction.description}</p>
+                        <div class="content-actions">
+                            <button class="btn-small">Edit</button>
+                            <button class="btn-small btn-danger" onclick="deleteAttraction('${attraction.id}')">Delete</button>
+                        </div>
+                    `;
+                    attractionsList.appendChild(attractionItem);
+                });
+            }
+        }
+
+        // Delete custom attraction
+        function deleteAttraction(attractionId) {
+            if (confirm('Are you sure you want to delete this attraction?')) {
+                const customAttractions = JSON.parse(localStorage.getItem('customAttractions') || '[]');
+                const updatedAttractions = customAttractions.filter(attr => attr.id !== attractionId);
+                localStorage.setItem('customAttractions', JSON.stringify(updatedAttractions));
+                alert('✅ Attraction deleted successfully!');
+                location.reload();
+            }
+        }
+
+        // Check if user is admin
+        window.addEventListener('DOMContentLoaded', function() {
+            if (!isAdmin()) {
+                // Redirect non-admin users
+                showMessage('Admin access only!', 'error');
+                setTimeout(() => {
+                    window.location.href = 'index.html';
+                }, 1500);
+            }
+
+            // Load custom attractions
+            loadCustomAttractions();
+        });
+    </script>
+</body>
+</html>
