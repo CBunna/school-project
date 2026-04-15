@@ -17,15 +17,19 @@
 
 ---
 
-## 🔧 Current Issue
+## 🔧 Latest Updates (2026-04-15 - Latest Push)
 
-**Error:** `TypeError: Failed to fetch` when trying to add custom attractions
+### ✅ Added Retry Logic for Backend Wake-Up
+- Custom attractions loading now retries up to 3 times (6 seconds total)
+- Shows loading progress during retries: "⏳ Loading attractions... (attempt 1/3)"
+- Handles Render free tier backend sleep gracefully
+- Enhanced error logging with detailed diagnostics
 
-**Possible Causes:**
-1. Backend still deploying (wait 2-3 minutes after push)
-2. CORS configuration not applied yet
-3. FRONTEND_URL environment variable not set correctly
-4. Browser cache showing old code
+### 🔍 Known Behavior on Render Free Tier
+- Backend sleeps after 15 minutes of inactivity
+- First request takes 30-60 seconds to wake up
+- **This is normal** - the retry logic handles this automatically
+- After wake-up, everything works normally
 
 ---
 
@@ -193,5 +197,5 @@ Once everything works:
 
 ---
 
-**Last Updated:** 2026-04-15
-**Status:** Code deployed, troubleshooting "Failed to fetch" error
+**Last Updated:** 2026-04-15 (Latest: Retry logic added)
+**Status:** ✅ Retry logic deployed - handles backend wake-up automatically
