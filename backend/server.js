@@ -26,6 +26,7 @@ const accommodationRoutes = require('./routes/accommodation.routes');
 const activitiesRoutes = require('./routes/activities.routes');
 const bookingsRoutes = require('./routes/bookings.routes');
 const contactRoutes = require('./routes/contact.routes');
+const setupRoutes = require('./routes/setup.routes');
 
 // API Routes
 app.use('/api/auth', authRoutes);
@@ -34,6 +35,7 @@ app.use('/api/accommodation', accommodationRoutes);
 app.use('/api/activities', activitiesRoutes);
 app.use('/api/bookings', bookingsRoutes);
 app.use('/api/contact', contactRoutes);
+app.use('/api/setup', setupRoutes);
 
 // Health check endpoint
 app.get('/api/health', (req, res) => {

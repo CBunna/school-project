@@ -62,11 +62,40 @@ git push -u origin main
    - Publish Directory: `.`
 4. Click "Create Static Site"
 
-#### 4. Initialize Database
-Once backend is deployed:
-1. Go to your backend service on Render
-2. Click "Shell" tab
-3. Run: `npm run db:setup`
+#### 4. Initialize Database (Free Tier - Super Easy!)
+
+**Method 1: One-Click Setup URL ⭐ EASIEST**
+
+After your backend is deployed, simply visit this URL in your browser:
+
+```
+https://your-backend-name.onrender.com/api/setup?secret=beskydy-setup-2025
+```
+
+Replace `your-backend-name` with your actual Render backend URL.
+
+**What happens:**
+- ✅ Creates all database tables
+- ✅ Inserts sample data (attractions, accommodations, activities)
+- ✅ Creates demo users (admin and regular user)
+- ✅ Shows you confirmation with statistics
+
+**Security:**
+- The endpoint requires a secret key (default: `beskydy-setup-2025`)
+- You can change this in Render environment variables: `SETUP_SECRET`
+- Only works once - if database is already initialized, it will tell you
+
+**To check if database is initialized:**
+Visit: `https://your-backend-name.onrender.com/api/setup/check`
+
+---
+
+**Method 2: Manual SQL (Alternative)**
+
+If you prefer manual setup:
+1. Download [DBeaver](https://dbeaver.io/download/) (free)
+2. Connect to your Render PostgreSQL database (get credentials from Render dashboard)
+3. Open and execute `backend/database/schema.sql`
 
 #### 5. Update API URLs
 In your frontend `js/api.js`, update:
