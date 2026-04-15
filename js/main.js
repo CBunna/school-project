@@ -329,10 +329,7 @@ if ('serviceWorker' in navigator) {
     console.log('Service Worker support detected (not registered in development)');
 }
 
-
-
-const API_BASE_URL = 'https://api.beskydy-region.cz'; 
-
+// API_BASE_URL is now defined in api.js
 
 async function fetchData(endpoint) {
     try {
