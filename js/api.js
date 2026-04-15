@@ -8,6 +8,8 @@ const API_BASE_URL = window.location.hostname === 'localhost' || window.location
     ? 'http://localhost:3001/api'  // Local development
     : 'https://beskydy-backend.onrender.com/api';  // Production on Render
 
+console.log('🌐 API_BASE_URL:', API_BASE_URL);
+
 /**
  * Helper function to get JWT token from localStorage
  */
