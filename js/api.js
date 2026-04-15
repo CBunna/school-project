@@ -3,7 +3,10 @@
  * Connects frontend to backend API
  */
 
-const API_BASE_URL = 'http://localhost:3001/api';
+// Automatically detect environment and use correct API URL
+const API_BASE_URL = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
+    ? 'http://localhost:3001/api'  // Local development
+    : 'https://beskydy-backend.onrender.com/api';  // Production on Render
 
 /**
  * Helper function to get JWT token from localStorage
