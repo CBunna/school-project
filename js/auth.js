@@ -38,46 +38,76 @@ function checkAuth() {
 }
 
 /**
- * Login function
+ * Login function - Updated to use backend API
  * @param {string} email - User email
  * @param {string} password - User password
- * @returns {boolean} Success status
+ * @returns {Promise<boolean>} Success status
  */
-function login(email, password) {
-    const user = DEMO_USERS[email];
+async function login(email, password) {
+    try {
+        // Use backend API for authentication (from api.js)
+        if (typeof AuthAPI !== 'undefined') {
+            // Backend API authentication
+            const result = await AuthAPI.login(email, password);
 
-    if (user && user.password === password) {
-        // Create user session (without password)
-        const userSession = {
-            name: user.name,
-            email: user.email,
-            userType: user.userType,
-            phone: user.phone,
-            isLoggedIn: true,
-            loginTime: new Date().toISOString()
-        };
+            // Show success message
+            showMessage('Login successful! Redirecting...', 'success');
 
-        // Save to localStorage
-        localStorage.setItem('user', JSON.stringify(userSession));
+            // Redirect based on user type
+            setTimeout(() => {
+                // Determine base path based on current location
+                const basePath = window.location.pathname.includes('/pages/') ? '../' : 'pages/';
 
-        // Show success message
-        showMessage('Login successful! Redirecting...', 'success');
+                if (result.user.user_type === 'admin') {
+                    window.location.href = basePath + 'admin/admin-dashboard.html';
+                } else {
+                    window.location.href = basePath + 'user/user-profile.html';
+                }
+            }, 1000);
 
-        // Redirect based on user type
-        setTimeout(() => {
-            // Determine base path based on current location
-            const basePath = window.location.pathname.includes('/pages/') ? '../' : 'pages/';
+            return true;
+        } else {
+            // Fallback to old demo system if API not available
+            const user = DEMO_USERS[email];
 
-            if (user.userType === 'admin') {
-                window.location.href = basePath + 'admin/admin-dashboard.html';
+            if (user && user.password === password) {
+                // Create user session (without password)
+                const userSession = {
+                    name: user.name,
+                    email: user.email,
+                    userType: user.userType,
+                    phone: user.phone,
+                    isLoggedIn: true,
+                    loginTime: new Date().toISOString()
+                };
+
+                // Save to localStorage
+                localStorage.setItem('user', JSON.stringify(userSession));
+
+                // Show success message
+                showMessage('Login successful! Redirecting...', 'success');
+
+                // Redirect based on user type
+                setTimeout(() => {
+                    // Determine base path based on current location
+                    const basePath = window.location.pathname.includes('/pages/') ? '../' : 'pages/';
+
+                    if (user.userType === 'admin') {
+                        window.location.href = basePath + 'admin/admin-dashboard.html';
+                    } else {
+                        window.location.href = basePath + 'user/user-profile.html';
+                    }
+                }, 1000);
+
+                return true;
             } else {
-                window.location.href = basePath + 'user/user-profile.html';
+                showMessage('Invalid email or password', 'error');
+                return false;
             }
-        }, 1000);
-
-        return true;
-    } else {
-        showMessage('Invalid email or password', 'error');
+        }
+    } catch (error) {
+        console.error('Login error:', error);
+        showMessage(error.message || 'Login failed. Please try again.', 'error');
         return false;
     }
 }
@@ -211,13 +241,13 @@ function updateNavigation() {
 
 // Login form handler
 if (document.getElementById('login-form')) {
-    document.getElementById('login-form').addEventListener('submit', function(e) {
+    document.getElementById('login-form').addEventListener('submit', async function(e) {
         e.preventDefault();
 
         const email = document.getElementById('email').value;
         const password = document.getElementById('password').value;
 
-        login(email, password);
+        await login(email, password);
     });
 }
 
