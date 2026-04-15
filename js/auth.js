@@ -168,7 +168,8 @@ function logout() {
  */
 function isAdmin() {
     const user = checkAuth();
-    return user && user.userType === 'admin';
+    // Support both 'role' (from backend API) and 'userType' (from old demo system)
+    return user && (user.role === 'admin' || user.userType === 'admin');
 }
 
 /**
