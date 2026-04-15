@@ -420,59 +420,77 @@
                         category: category,
                         location: location || 'Beskydy Region',
                         image_url: '../images/default-attraction.jpg', // Default image
-                        rating: 4.5
+                        rating: 4.5,
+                        elevation: null
                     };
 
-                    // For now, save to localStorage (demo mode)
-                    const attractions = JSON.parse(localStorage.getItem('customAttractions') || '[]');
-                    attractionData.id = 'custom-' + Date.now();
-                    attractions.push(attractionData);
-                    localStorage.setItem('customAttractions', JSON.stringify(attractions));
+                    try {
+                        // Save to backend API
+                        const response = await apiRequest('/attractions', {
+                            method: 'POST',
+                            body: JSON.stringify(attractionData)
+                        });
 
-                    // Show success message
-                    alert(`✅ Attraction "${name}" has been added successfully!`);
+                        // Show success message
+                        alert(`✅ Attraction "${name}" has been added successfully!`);
 
-                    // Reset form and hide
-                    attractionForm.reset();
-                    document.getElementById('add-attraction-form').style.display = 'none';
-                    document.getElementById('photo-preview-container').style.display = 'none';
+                        // Reset form and hide
+                        attractionForm.reset();
+                        document.getElementById('add-attraction-form').style.display = 'none';
+                        document.getElementById('photo-preview-container').style.display = 'none';
 
-                    // Refresh the page to show the new attraction
-                    location.reload();
+                        // Refresh the page to show the new attraction
+                        location.reload();
+                    } catch (error) {
+                        console.error('Error adding attraction:', error);
+                        alert('❌ Failed to add attraction. Please try again.');
+                    }
                 });
             }
         });
 
         // Load custom attractions into the list
-        function loadCustomAttractions() {
-            const customAttractions = JSON.parse(localStorage.getItem('customAttractions') || '[]');
+        async function loadCustomAttractions() {
             const attractionsList = document.getElementById('attractions-list');
 
-            if (customAttractions.length > 0 && attractionsList) {
-                customAttractions.forEach(attraction => {
-                    const attractionItem = document.createElement('div');
-                    attractionItem.className = 'content-item';
-                    attractionItem.innerHTML = `
-                        <h4>${attraction.name}</h4>
-                        <p>${attraction.description}</p>
-                        <div class="content-actions">
-                            <button class="btn-small">Edit</button>
-                            <button class="btn-small btn-danger" onclick="deleteAttraction('${attraction.id}')">Delete</button>
-                        </div>
-                    `;
-                    attractionsList.appendChild(attractionItem);
-                });
+            try {
+                // Fetch attractions from backend API
+                const response = await apiRequest('/attractions');
+                const customAttractions = response.attractions.filter(a => a.is_custom);
+
+                if (customAttractions.length > 0 && attractionsList) {
+                    customAttractions.forEach(attraction => {
+                        const attractionItem = document.createElement('div');
+                        attractionItem.className = 'content-item';
+                        attractionItem.innerHTML = `
+                            <h4>${attraction.name}</h4>
+                            <p>${attraction.description}</p>
+                            <div class="content-actions">
+                                <button class="btn-small">Edit</button>
+                                <button class="btn-small btn-danger" onclick="deleteAttraction(${attraction.id})">Delete</button>
+                            </div>
+                        `;
+                        attractionsList.appendChild(attractionItem);
+                    });
+                }
+            } catch (error) {
+                console.error('Error loading custom attractions:', error);
             }
         }
 
         // Delete custom attraction
-        function deleteAttraction(attractionId) {
+        async function deleteAttraction(attractionId) {
             if (confirm('Are you sure you want to delete this attraction?')) {
-                const customAttractions = JSON.parse(localStorage.getItem('customAttractions') || '[]');
-                const updatedAttractions = customAttractions.filter(attr => attr.id !== attractionId);
-                localStorage.setItem('customAttractions', JSON.stringify(updatedAttractions));
-                alert('✅ Attraction deleted successfully!');
-                location.reload();
+                try {
+                    await apiRequest(`/attractions/${attractionId}`, {
+                        method: 'DELETE'
+                    });
+                    alert('✅ Attraction deleted successfully!');
+                    location.reload();
+                } catch (error) {
+                    console.error('Error deleting attraction:', error);
+                    alert('❌ Failed to delete attraction. Please try again.');
+                }
             }
         }
 

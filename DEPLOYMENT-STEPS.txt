@@ -1,0 +1,303 @@
+═══════════════════════════════════════════════════════════════════
+  📋 COMPLETE DEPLOYMENT CHECKLIST - STEP BY STEP
+═══════════════════════════════════════════════════════════════════
+
+TOTAL TIME: 10-15 minutes
+COST: $0 (completely free!)
+
+───────────────────────────────────────────────────────────────────
+STEP 1: PUSH TO GITHUB (2 min)
+───────────────────────────────────────────────────────────────────
+
+In your terminal:
+
+  git add .
+  git commit -m "Complete project - ready for deployment"
+  git push -u origin main
+
+✓ Your code is now on GitHub!
+
+───────────────────────────────────────────────────────────────────
+STEP 2: CREATE RENDER ACCOUNT (1 min)
+───────────────────────────────────────────────────────────────────
+
+1. Go to: https://render.com
+2. Click "Get Started for Free"
+3. Sign up with GitHub
+4. Authorize Render to access your repositories
+
+✓ You're signed in to Render!
+
+───────────────────────────────────────────────────────────────────
+STEP 3: CREATE POSTGRESQL DATABASE (2 min)
+───────────────────────────────────────────────────────────────────
+
+1. In Render dashboard, click "New +" → "PostgreSQL"
+
+2. Fill in:
+   Name: beskydy-db
+   Database: beskydy_tourism
+   User: beskydy_admin
+   Region: Frankfurt (or closest to you)
+   Plan: Free
+
+3. Click "Create Database"
+
+4. Wait for status to show "Available" (~1 minute)
+
+5. ⚠️ IMPORTANT: Copy the "Internal Database URL"
+   (Looks like: postgresql://beskydy_admin:xxxx@dpg-xxxx...)
+
+   You'll need this in the next step!
+
+✓ Database created!
+
+───────────────────────────────────────────────────────────────────
+STEP 4: DEPLOY BACKEND API (3 min)
+───────────────────────────────────────────────────────────────────
+
+1. Click "New +" → "Web Service"
+
+2. Click "Connect" next to your GitHub repository
+   (If you don't see it, click "Connect account")
+
+3. Fill in settings:
+   Name: beskydy-backend
+   Region: Frankfurt (same as database)
+   Branch: main
+   Root Directory: backend
+   Environment: Node
+   Build Command: npm install
+   Start Command: npm start
+
+4. Scroll down to "Advanced" → "Environment Variables"
+   Click "Add Environment Variable" for each:
+
+   ┌────────────────────┬──────────────────────────────────────────┐
+   │ Key                │ Value                                    │
+   ├────────────────────┼──────────────────────────────────────────┤
+   │ NODE_ENV           │ production                               │
+   │ PORT               │ 3001                                     │
+   │ DATABASE_URL       │ [paste Internal Database URL here]       │
+   │ JWT_SECRET         │ beskydy-secret-2025-change-this          │
+   │ FRONTEND_URL       │ https://beskydy-frontend.onrender.com    │
+   │ SETUP_SECRET       │ beskydy-setup-2025                       │
+   └────────────────────┴──────────────────────────────────────────┘
+
+5. Click "Create Web Service"
+
+6. Wait for deployment (~2-3 minutes)
+   You'll see logs scrolling - wait for "Build successful"
+
+7. ⚠️ SAVE YOUR BACKEND URL!
+   (Shows at top, like: https://beskydy-backend.onrender.com)
+
+✓ Backend is deployed!
+
+───────────────────────────────────────────────────────────────────
+STEP 5: INITIALIZE DATABASE (1 min) ⭐ CRITICAL STEP
+───────────────────────────────────────────────────────────────────
+
+Now you need to set up the database tables and sample data.
+
+1. Copy your backend URL from Step 4
+
+2. Add this to the end: /api/setup?secret=beskydy-setup-2025
+
+3. Open in browser:
+   https://YOUR-BACKEND-URL.onrender.com/api/setup?secret=beskydy-setup-2025
+
+   Example:
+   https://beskydy-backend.onrender.com/api/setup?secret=beskydy-setup-2025
+
+4. ⏳ Wait 30-60 seconds (backend waking up from sleep)
+
+5. You should see this response:
+
+   {
+     "success": true,
+     "message": "✅ Database initialized successfully!",
+     "statistics": {
+       "users": "2",
+       "attractions": "6",
+       ...
+     }
+   }
+
+✓ Database is ready with sample data!
+
+───────────────────────────────────────────────────────────────────
+STEP 6: DEPLOY FRONTEND (2 min)
+───────────────────────────────────────────────────────────────────
+
+1. In Render dashboard, click "New +" → "Static Site"
+
+2. Connect same GitHub repository
+
+3. Fill in:
+   Name: beskydy-frontend
+   Branch: main
+   Root Directory: . (just a dot, or leave empty)
+   Build Command: (leave empty)
+   Publish Directory: . (just a dot)
+
+4. Click "Create Static Site"
+
+5. Wait for deployment (~1 minute)
+
+6. ⚠️ SAVE YOUR FRONTEND URL!
+   (Shows at top, like: https://beskydy-frontend.onrender.com)
+
+✓ Frontend is deployed!
+
+───────────────────────────────────────────────────────────────────
+STEP 7: UPDATE API URL IN FRONTEND (2 min)
+───────────────────────────────────────────────────────────────────
+
+Now connect your frontend to the backend:
+
+1. Open your project in code editor
+
+2. Go to: js/api.js
+
+3. Find line 6: const API_BASE_URL = 'http://localhost:3001/api';
+
+4. Change to your Render backend URL:
+   const API_BASE_URL = 'https://beskydy-backend.onrender.com/api';
+
+   (Use YOUR actual backend URL from Step 4)
+
+5. Save the file
+
+6. Commit and push:
+   git add js/api.js
+   git commit -m "Update API URL for production"
+   git push
+
+7. Render will auto-deploy (watch in dashboard, ~30 seconds)
+
+✓ Frontend connected to backend!
+
+───────────────────────────────────────────────────────────────────
+STEP 8: TEST YOUR LIVE WEBSITE! (2 min)
+───────────────────────────────────────────────────────────────────
+
+1. Open your frontend URL:
+   https://beskydy-frontend.onrender.com
+
+2. Click "Login"
+
+3. Test with admin account:
+   Email: admin@beskydy.cz
+   Password: adminpass123
+
+4. You should be redirected to Admin Dashboard ✓
+
+5. Logout and test user account:
+   Email: user@beskydy.cz
+   Password: userpass123
+
+6. You should be redirected to User Profile ✓
+
+7. Try making a booking ✓
+
+8. Check the Attractions page ✓
+
+✓ Everything works!
+
+───────────────────────────────────────────────────────────────────
+🎉 DEPLOYMENT COMPLETE!
+───────────────────────────────────────────────────────────────────
+
+Your live URLs:
+
+  🌐 Website: https://beskydy-frontend.onrender.com
+  🔧 API: https://beskydy-backend.onrender.com
+  📊 GitHub: https://github.com/CBunna/school-project
+
+Demo accounts:
+
+  👨‍💼 Admin: admin@beskydy.cz / adminpass123
+  👤 User: user@beskydy.cz / userpass123
+
+───────────────────────────────────────────────────────────────────
+WHAT TO SHARE WITH COLLEAGUES
+───────────────────────────────────────────────────────────────────
+
+Send them:
+
+  "Hi! The project is live!
+
+  🌐 Website: https://beskydy-frontend.onrender.com
+  📁 GitHub: https://github.com/CBunna/school-project
+
+  Demo login:
+  - Admin: admin@beskydy.cz / adminpass123
+  - User: user@beskydy.cz / userpass123
+
+  Note: First load takes 30 seconds (free tier sleeps after
+  15 min of inactivity, then wakes up automatically)
+
+  Features to test:
+  ✓ Login/logout (both user types)
+  ✓ Browse attractions
+  ✓ Make a booking
+  ✓ Admin can add custom attractions
+  ✓ User profile shows booking history
+
+  Let me know if you have any issues!"
+
+───────────────────────────────────────────────────────────────────
+IMPORTANT NOTES
+───────────────────────────────────────────────────────────────────
+
+⚠️ Free Tier Limitations:
+  • Services sleep after 15 minutes of no activity
+  • First request wakes them up (~30 seconds)
+  • This is NORMAL and expected for free tier
+  • Perfect for school projects and demos!
+
+💡 Tips:
+  • Test before sharing with colleagues
+  • Wake up the site before presentations
+  • Include the "30 second wake-up" note when sharing
+  • You can upgrade to paid tier anytime for instant response
+
+🔒 Security:
+  • Never commit .env file
+  • Change JWT_SECRET in production
+  • Can remove setup endpoint after initial use
+
+───────────────────────────────────────────────────────────────────
+TROUBLESHOOTING QUICK FIXES
+───────────────────────────────────────────────────────────────────
+
+Problem: Backend won't start
+→ Check logs in Render dashboard
+→ Verify DATABASE_URL is set correctly
+→ Make sure PostgreSQL database shows "Available"
+
+Problem: Frontend can't connect to backend
+→ Check you updated API_BASE_URL in js/api.js
+→ Verify backend is running (visit backend URL)
+→ Check browser console for errors
+
+Problem: Login doesn't work
+→ Make sure you ran /api/setup successfully
+→ Check /api/setup/check to verify database is initialized
+→ Try the exact credentials: admin@beskydy.cz / adminpass123
+
+Problem: Page loads forever
+→ This is normal on first request (waking up from sleep)
+→ Wait 30-60 seconds and refresh
+
+───────────────────────────────────────────────────────────────────
+
+Need detailed help? Check these files:
+  • DATABASE-SETUP-GUIDE.md - Complete database setup
+  • DEPLOYMENT-GUIDE.md - Full deployment documentation
+  • QUICK-DEPLOY.md - Quick reference guide
+
+═══════════════════════════════════════════════════════════════════
+              🎓 Good luck with your submission!
+═══════════════════════════════════════════════════════════════════

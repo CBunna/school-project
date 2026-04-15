@@ -31,6 +31,8 @@ CREATE TABLE attractions (
     image_url VARCHAR(500),
     category VARCHAR(50),
     rating DECIMAL(2,1),
+    is_custom BOOLEAN DEFAULT false,
+    created_by INTEGER REFERENCES users(id) ON DELETE SET NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 

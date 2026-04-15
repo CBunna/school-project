@@ -52,6 +52,7 @@ const getAttractionById = async (req, res) => {
 const createAttraction = async (req, res) => {
   try {
     const { name, description, location, elevation, image_url, category, rating } = req.body;
+    const userId = req.user.id; // Get user ID from verified token
 
     if (!name || !description || !location) {
       return res.status(400).json({
@@ -60,10 +61,10 @@ const createAttraction = async (req, res) => {
     }
 
     const result = await pool.query(
-      `INSERT INTO attractions (name, description, location, elevation, image_url, category, rating)
-       VALUES ($1, $2, $3, $4, $5, $6, $7)
+      `INSERT INTO attractions (name, description, location, elevation, image_url, category, rating, is_custom, created_by)
+       VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)
        RETURNING *`,
-      [name, description, location, elevation, image_url, category, rating]
+      [name, description, location, elevation, image_url, category, rating, true, userId]
     );
 
     res.status(201).json({
