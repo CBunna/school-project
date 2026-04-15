@@ -58,7 +58,7 @@ async function login(email, password) {
                 // Determine base path based on current location
                 const basePath = window.location.pathname.includes('/pages/') ? '../' : 'pages/';
 
-                if (result.user.user_type === 'admin') {
+                if (result.user.role === 'admin') {
                     window.location.href = basePath + 'admin/admin-dashboard.html';
                 } else {
                     window.location.href = basePath + 'user/user-profile.html';

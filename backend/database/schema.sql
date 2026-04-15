@@ -105,11 +105,11 @@ CREATE INDEX idx_contacts_status ON contacts(status);
 
 -- Insert sample data
 
--- Sample users (passwords are hashed versions of the demo passwords)
+-- Sample users (passwords: admin@beskydy.cz = adminpass123, user@beskydy.cz = userpass123)
 INSERT INTO users (email, password, first_name, last_name, role) VALUES
-('admin@beskydy.cz', '$2b$10$rQYj3qYvGz4hQqMTKVxBKO7n.LL1VlZuVFqJxHxKzPPxJmPqJqV/6', 'Admin', 'Beskydy', 'admin'),
-('user@beskydy.cz', '$2b$10$Y8kGNq7F.6xKVkYJwFGp9.fLqvKHlP8jD2xQwWmZzXkL7wZJxKzOK', 'Jan', 'Novák', 'user'),
-('marie.svobodova@email.cz', '$2b$10$Y8kGNq7F.6xKVkYJwFGp9.fLqvKHlP8jD2xQwWmZzXkL7wZJxKzOK', 'Marie', 'Svobodová', 'user');
+('admin@beskydy.cz', '$2b$10$njVllE3h9Eg.n6L252fTxeXosf8Exy0tTsmxxPb7PDz.2eNVmeY8G', 'Admin', 'Beskydy', 'admin'),
+('user@beskydy.cz', '$2b$10$tqEPVgExzyDCib3d8E57uew18/H0iELrWTGTksjCZtbuSbw8sdktq', 'Jan', 'Novák', 'user'),
+('marie.svobodova@email.cz', '$2b$10$tqEPVgExzyDCib3d8E57uew18/H0iELrWTGTksjCZtbuSbw8sdktq', 'Marie', 'Svobodová', 'user');
 
 -- Sample attractions
 INSERT INTO attractions (name, description, location, elevation, image_url, category, rating) VALUES
