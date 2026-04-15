@@ -32,21 +32,45 @@ async function apiRequest(endpoint, options = {}) {
         headers['Authorization'] = `Bearer ${token}`;
     }
 
+    const url = `${API_BASE_URL}${endpoint}`;
+    console.log(`🌐 API Request: ${options.method || 'GET'} ${url}`);
+
     try {
-        const response = await fetch(`${API_BASE_URL}${endpoint}`, {
+        const response = await fetch(url, {
             ...options,
             headers
         });
 
-        const data = await response.json();
-
-        if (!response.ok) {
-            throw new Error(data.error || 'API request failed');
+        // Try to parse JSON response
+        let data;
+        try {
+            data = await response.json();
+        } catch (parseError) {
+            // If JSON parsing fails, it might be a network/CORS error
+            if (!response.ok) {
+                throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+            }
+            throw new Error('Invalid JSON response from server');
         }
 
+        if (!response.ok) {
+            throw new Error(data.error || `HTTP ${response.status}: ${response.statusText}`);
+        }
+
+        console.log(`✅ API Response: ${options.method || 'GET'} ${endpoint}`, data);
         return data;
     } catch (error) {
-        console.error('API Error:', error);
+        // Enhanced error logging
+        if (error.message === 'Failed to fetch') {
+            console.error('❌ Network Error: Cannot reach backend server');
+            console.error('   Possible causes:');
+            console.error('   - Backend is sleeping (Render free tier) - wait 30-60 seconds');
+            console.error('   - CORS configuration issue');
+            console.error('   - Backend server is down');
+            console.error('   - Network connectivity problem');
+        } else {
+            console.error('❌ API Error:', error.message);
+        }
         throw error;
     }
 }

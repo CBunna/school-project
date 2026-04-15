@@ -450,16 +450,25 @@
             }
         });
 
-        // Load custom attractions into the list
-        async function loadCustomAttractions() {
+        // Load custom attractions into the list with retry logic for backend wake-up
+        async function loadCustomAttractions(retryCount = 0) {
             const attractionsList = document.getElementById('attractions-list');
+            const maxRetries = 3;
+            const retryDelay = 2000; // 2 seconds between retries
 
             try {
+                console.log('📡 Fetching custom attractions from backend...');
+
                 // Fetch attractions from backend API
                 const response = await apiRequest('/attractions');
                 const customAttractions = response.attractions.filter(a => a.is_custom);
 
+                console.log(`✅ Loaded ${customAttractions.length} custom attractions`);
+
                 if (customAttractions.length > 0 && attractionsList) {
+                    // Clear existing list
+                    attractionsList.innerHTML = '';
+
                     customAttractions.forEach(attraction => {
                         const attractionItem = document.createElement('div');
                         attractionItem.className = 'content-item';
@@ -473,9 +482,35 @@
                         `;
                         attractionsList.appendChild(attractionItem);
                     });
+                } else if (attractionsList) {
+                    attractionsList.innerHTML = '<p style="color: #666; padding: 1rem;">No custom attractions yet. Add one using the form above!</p>';
                 }
             } catch (error) {
-                console.error('Error loading custom attractions:', error);
+                console.error('❌ Error loading custom attractions:', error);
+
+                // Retry logic for backend wake-up (Render free tier sleeps after 15min)
+                if (retryCount < maxRetries) {
+                    console.log(`⏳ Backend may be waking up... Retrying in ${retryDelay/1000}s (attempt ${retryCount + 1}/${maxRetries})`);
+
+                    if (attractionsList) {
+                        attractionsList.innerHTML = `<p style="color: #ff9800; padding: 1rem;">⏳ Loading attractions... (attempt ${retryCount + 1}/${maxRetries})</p>`;
+                    }
+
+                    setTimeout(() => {
+                        loadCustomAttractions(retryCount + 1);
+                    }, retryDelay);
+                } else {
+                    // All retries failed - show friendly error but don't block the page
+                    console.error('❌ Failed to load attractions after multiple attempts');
+                    if (attractionsList) {
+                        attractionsList.innerHTML = `
+                            <p style="color: #f44336; padding: 1rem;">
+                                ⚠️ Unable to load attractions. You can still add new attractions using the form above.
+                                <br><small>The backend may be waking up. Try refreshing the page in 30 seconds.</small>
+                            </p>
+                        `;
+                    }
+                }
             }
         }
 
