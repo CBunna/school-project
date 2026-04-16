@@ -4,10 +4,15 @@
 let lastHealthCheck = null;
 let healthCheckInterval = null;
 
+// Detect environment and use correct API URL
+const API_BASE_URL = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
+    ? 'http://localhost:3001/api'
+    : 'https://beskydy-backend.onrender.com/api';
+
 // Check backend and database health
 async function checkBackendHealth() {
     try {
-        const response = await fetch('http://localhost:3001/api/health', {
+        const response = await fetch(`${API_BASE_URL}/health`, {
             method: 'GET',
             headers: {
                 'Content-Type': 'application/json'
