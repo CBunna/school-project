@@ -102,6 +102,11 @@
     <script src="../../js/main.js"></script>
     <script src="../../js/auth.js"></script>
     <script>
+        // Detect environment and use correct API URL
+        const API_BASE_URL = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
+            ? 'http://localhost:3001/api'
+            : 'https://beskydy-backend.onrender.com/api';
+        console.log('🌐 API_BASE_URL:', API_BASE_URL);
         // Load gallery from database (attractions, accommodation, activities)
         async function loadGallery() {
             try {
@@ -111,9 +116,9 @@
 
                 // Fetch all data sources in parallel
                 const [attractionsRes, accommodationRes, activitiesRes] = await Promise.all([
-                    fetch('http://localhost:3001/api/attractions'),
-                    fetch('http://localhost:3001/api/accommodation'),
-                    fetch('http://localhost:3001/api/activities')
+                    fetch(`${API_BASE_URL}/attractions'),
+                    fetch(`${API_BASE_URL}/accommodation'),
+                    fetch(`${API_BASE_URL}/activities')
                 ]);
 
                 const attractionsData = await attractionsRes.json();

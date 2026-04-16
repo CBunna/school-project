@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Backend Connection</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 50px auto;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        .test-box {
+            background: white;
+            padding: 20px;
+            margin: 10px 0;
+            border-radius: 5px;
+            border-left: 4px solid #007bff;
+        }
+        .success { border-left-color: #28a745; }
+        .error { border-left-color: #dc3545; }
+        button {
+            background: #007bff;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            margin: 5px;
+        }
+        button:hover { background: #0056b3; }
+        pre {
+            background: #f8f9fa;
+            padding: 10px;
+            border-radius: 3px;
+            overflow-x: auto;
+        }
+    </style>
+</head>
+<body>
+    <h1>🔍 Backend Connection Test</h1>
+    <p>This page tests if your frontend can connect to the backend.</p>
+
+    <div class="test-box">
+        <h3>Current Configuration</h3>
+        <p><strong>Hostname:</strong> <span id="hostname"></span></p>
+        <p><strong>API URL:</strong> <span id="api-url"></span></p>
+    </div>
+
+    <button onclick="testHealth()">Test 1: Health Check</button>
+    <button onclick="testAccommodation()">Test 2: Get Accommodation</button>
+    <button onclick="testCORS()">Test 3: CORS Preflight</button>
+    <button onclick="clearResults()">Clear Results</button>
+
+    <div id="results"></div>
+
+    <script>
+        // Show current config
+        document.getElementById('hostname').textContent = window.location.hostname;
+        
+        const API_BASE_URL = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
+            ? 'http://localhost:3001/api'
+            : 'https://beskydy-backend.onrender.com/api';
+        
+        document.getElementById('api-url').textContent = API_BASE_URL;
+
+        function addResult(title, success, data) {
+            const div = document.createElement('div');
+            div.className = `test-box ${success ? 'success' : 'error'}`;
+            div.innerHTML = `
+                <h3>${success ? '✅' : '❌'} ${title}</h3>
+                <pre>${JSON.stringify(data, null, 2)}</pre>
+            `;
+            document.getElementById('results').appendChild(div);
+        }
+
+        async function testHealth() {
+            try {
+                console.log('Testing health endpoint...');
+                const response = await fetch(`${API_BASE_URL}/health`);
+                const data = await response.json();
+                addResult('Health Check', response.ok, {
+                    status: response.status,
+                    statusText: response.statusText,
+                    data: data
+                });
+            } catch (error) {
+                addResult('Health Check', false, {
+                    error: error.message,
+                    type: error.name,
+                    details: 'This usually means CORS is blocking or backend is down'
+                });
+            }
+        }
+
+        async function testAccommodation() {
+            try {
+                console.log('Testing accommodation endpoint...');
+                const response = await fetch(`${API_BASE_URL}/accommodation`);
+                const data = await response.json();
+                addResult('Get Accommodation', response.ok, {
+                    status: response.status,
+                    statusText: response.statusText,
+                    count: data.accommodation ? data.accommodation.length : 0,
+                    sample: data.accommodation ? data.accommodation[0] : null
+                });
+            } catch (error) {
+                addResult('Get Accommodation', false, {
+                    error: error.message,
+                    type: error.name,
+                    details: 'Check browser console (F12) for more details'
+                });
+            }
+        }
+
+        async function testCORS() {
+            try {
+                console.log('Testing CORS...');
+                const response = await fetch(`${API_BASE_URL}/health`, {
+                    method: 'OPTIONS',
+                    headers: {
+                        'Origin': window.location.origin,
+                        'Access-Control-Request-Method': 'GET',
+                    }
+                });
+                addResult('CORS Preflight', response.ok, {
+                    status: response.status,
+                    headers: {
+                        'access-control-allow-origin': response.headers.get('access-control-allow-origin'),
+                        'access-control-allow-methods': response.headers.get('access-control-allow-methods'),
+                        'access-control-allow-credentials': response.headers.get('access-control-allow-credentials'),
+                    }
+                });
+            } catch (error) {
+                addResult('CORS Preflight', false, {
+                    error: error.message,
+                    origin: window.location.origin,
+                    details: 'CORS is blocking the request'
+                });
+            }
+        }
+
+        function clearResults() {
+            document.getElementById('results').innerHTML = '';
+        }
+
+        // Auto-run tests on load
+        window.addEventListener('DOMContentLoaded', () => {
+            console.log('🔍 Backend Connection Tester Loaded');
+            console.log('API URL:', API_BASE_URL);
+            console.log('Current Origin:', window.location.origin);
+        });
+    </script>
+</body>
+</html>

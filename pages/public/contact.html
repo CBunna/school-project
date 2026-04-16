@@ -307,6 +307,11 @@
     <script src="../../js/auth.js"></script>
     <script src="../../js/api.js"></script>
     <script>
+        // Detect environment and use correct API URL
+        const API_BASE_URL = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
+            ? 'http://localhost:3001/api'
+            : 'https://beskydy-backend.onrender.com/api';
+        console.log('🌐 API_BASE_URL:', API_BASE_URL);
         // Handle contact form submission
         document.getElementById('contact-form').addEventListener('submit', async function(e) {
             e.preventDefault();
@@ -327,7 +332,7 @@
             try {
                 console.log('📤 Submitting contact form...');
 
-                const response = await fetch('http://localhost:3001/api/contact', {
+                const response = await fetch(`${API_BASE_URL}/contact`, {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json'
