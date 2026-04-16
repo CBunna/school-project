@@ -133,69 +133,65 @@
             </div>
         </section>
 
-        <!-- Top Attractions Section -->
-        <section class="attractions-preview" aria-labelledby="attractions-title">
+        <!-- Recommended Accommodation Section (Dynamic) -->
+        <section class="accommodation-preview" style="background: var(--bg-light); padding: 4rem 0;">
+            <div class="container">
+                <h2 class="section-title">Recommended Accommodation</h2>
+                <p class="section-subtitle">Find the perfect place for your stay</p>
+
+                <div id="accommodation-grid" class="card-grid">
+                    <!-- Dynamic content will be loaded here -->
+                    <div style="text-align: center; padding: 2rem; grid-column: 1 / -1;">
+                        <p>Loading accommodation...</p>
+                    </div>
+                </div>
+
+                <div style="text-align: center; margin-top: 2rem;">
+                    <a href="pages/public/accommodation.html" class="cta-button">View All Accommodation</a>
+                </div>
+            </div>
+        </section>
+
+        <!-- Popular Activities Section (Dynamic) -->
+        <section class="activities-preview" style="padding: 4rem 0;">
+            <div class="container">
+                <h2 class="section-title">Popular Activities</h2>
+                <p class="section-subtitle">Exciting things to do in Beskydy</p>
+
+                <div id="activities-grid" class="card-grid">
+                    <!-- Dynamic content will be loaded here -->
+                    <div style="text-align: center; padding: 2rem; grid-column: 1 / -1;">
+                        <p>Loading activities...</p>
+                    </div>
+                </div>
+
+                <div style="text-align: center; margin-top: 2rem;">
+                    <a href="pages/public/activities.html" class="cta-button">View All Activities</a>
+                </div>
+            </div>
+        </section>
+
+        <!-- Top Attractions Section (Dynamic) -->
+        <section class="attractions-preview" aria-labelledby="attractions-title" style="background: var(--bg-light); padding: 4rem 0;">
             <div class="container">
                 <h2 id="attractions-title" class="section-title">Top Attractions</h2>
                 <p class="section-subtitle">Discover the most popular places in Beskydy</p>
-                
-                <div class="card-grid">
-                    <!-- Card 1 - Using hReview microformat -->
-                    <article class="card hreview">
-                        <img src="images/lysa-hora.webp" alt="Lysá hora - highest peak of Beskydy covered with snow" class="card-image">
-                        <div class="card-content">
-                            <h3 class="card-title item">
-                                <span class="fn">Lysá Hora</span>
-                            </h3>
-                            <p class="card-description">
-                                The highest peak of the Moravian-Silesian Beskydy (4,341 ft above sea level) with a lookout tower and 
-                                magnificent views of surrounding mountains.
-                            </p>
-                            <div class="rating" style="display: none;">
-                                <span class="value">5</span>
-                                <span class="best">5</span>
-                            </div>
-                            <a href="attractions.html#lysa-hora" class="card-link">
-                                Learn more →
-                            </a>
-                        </div>
-                    </article>
-                    
-                    <!-- Card 2 -->
-                    <article class="card">
-                        <img src="images/Pustevny.webp" alt="Pustevny - wooden cottages in traditional Wallachian style" class="card-image">
-                        <div class="card-content">
-                            <h3 class="card-title">Pustevny</h3>
-                            <p class="card-description">
-                                Mountain saddle with unique buildings in the spirit of Wallachian architecture. 
-                                Popular tourist destination with restaurants and accommodation.
-                            </p>
-                            <a href="attractions.html#pustevny" class="card-link">
-                                Learn more →
-                            </a>
-                        </div>
-                    </article>
-                    
-                    <!-- Card 3 -->
-                    <article class="card">
-                        <img src="images/Radhošť.jpeg" alt="Radegast - statue of Slavic god on Radhošť summit" class="card-image">
-                        <div class="card-content">
-                            <h3 class="card-title">Radhošť</h3>
-                            <p class="card-description">
-                                Mythical mountain with the chapel of St. Cyril and Methodius and the statue of the Slavic god Radegast. 
-                                Important pilgrimage and tourist site.
-                            </p>
-                            <a href="attractions.html#radhost" class="card-link">
-                                Learn more →
-                            </a>
-                        </div>
-                    </article>
+
+                <div id="attractions-grid" class="card-grid">
+                    <!-- Dynamic content will be loaded here -->
+                    <div style="text-align: center; padding: 2rem; grid-column: 1 / -1;">
+                        <p>Loading attractions...</p>
+                    </div>
+                </div>
+
+                <div style="text-align: center; margin-top: 2rem;">
+                    <a href="pages/public/attractions.html" class="cta-button">View All Attractions</a>
                 </div>
             </div>
         </section>
 
         <!-- Upcoming Events Section with hCalendar microformat -->
-        <section class="events-section" style="background: var(--bg-light); padding: 4rem 0;">
+        <section class="events-section" style="padding: 4rem 0;">
             <div class="container">
                 <h2 class="section-title">Upcoming Events</h2>
                 <p class="section-subtitle">Don't miss these interesting events in the region</p>
@@ -346,5 +342,161 @@
     <!-- JavaScript -->
     <script src="js/main.js"></script>
     <script src="js/auth.js"></script>
+
+    <!-- Dynamic Content Script -->
+    <script>
+        // Detect environment and use correct API URL
+        const API_BASE_URL = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
+            ? 'http://localhost:3001/api'
+            : 'https://beskydy-backend.onrender.com/api';
+
+        console.log('🌐 API_BASE_URL:', API_BASE_URL);
+
+        // Load Recommended Accommodation
+        async function loadRecommendedAccommodation() {
+            const grid = document.getElementById('accommodation-grid');
+            try {
+                console.log('📡 Fetching accommodation from backend...');
+                const response = await fetch(`${API_BASE_URL}/accommodation`);
+
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+
+                const data = await response.json();
+                console.log('✅ Accommodation data received:', data);
+
+                const items = data.accommodation.slice(0, 3); // First 3 items
+
+                if (items.length === 0) {
+                    grid.innerHTML = '<p style="text-align: center; padding: 2rem;">No accommodation available at the moment.</p>';
+                    return;
+                }
+
+                grid.innerHTML = items.map(item => `
+                    <article class="card">
+                        <img src="${item.image_url}" alt="${item.name}" class="card-image" onerror="this.src='images/placeholder.jpg'">
+                        <div class="card-content">
+                            <h3 class="card-title">${item.name}</h3>
+                            <p class="card-description">${item.description}</p>
+                            <p><strong>📍 Location:</strong> ${item.location}</p>
+                            <p><strong>💰 Price:</strong> ${item.price_per_night} CZK/night</p>
+                            <a href="pages/public/accommodation.html" class="card-link">
+                                View Details →
+                            </a>
+                        </div>
+                    </article>
+                `).join('');
+
+            } catch (error) {
+                console.error('❌ Error loading accommodation:', error);
+                grid.innerHTML = `
+                    <div style="text-align: center; padding: 2rem; grid-column: 1 / -1;">
+                        <p style="color: #d32f2f;">⚠️ Unable to load accommodation. Please try again later.</p>
+                    </div>
+                `;
+            }
+        }
+
+        // Load Popular Activities
+        async function loadPopularActivities() {
+            const grid = document.getElementById('activities-grid');
+            try {
+                console.log('📡 Fetching activities from backend...');
+                const response = await fetch(`${API_BASE_URL}/activities`);
+
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+
+                const data = await response.json();
+                console.log('✅ Activities data received:', data);
+
+                const items = data.activities.slice(0, 3); // First 3 items
+
+                if (items.length === 0) {
+                    grid.innerHTML = '<p style="text-align: center; padding: 2rem;">No activities available at the moment.</p>';
+                    return;
+                }
+
+                grid.innerHTML = items.map(item => `
+                    <article class="card">
+                        <img src="${item.image_url}" alt="${item.name}" class="card-image" onerror="this.src='images/placeholder.jpg'">
+                        <div class="card-content">
+                            <h3 class="card-title">${item.name}</h3>
+                            <p class="card-description">${item.description}</p>
+                            <p><strong>⏱️ Duration:</strong> ${item.duration}</p>
+                            <p><strong>🏷️ Difficulty:</strong> ${item.difficulty}</p>
+                            <p><strong>💰 Price:</strong> ${item.price} CZK</p>
+                            <a href="pages/public/activities.html" class="card-link">
+                                View Details →
+                            </a>
+                        </div>
+                    </article>
+                `).join('');
+
+            } catch (error) {
+                console.error('❌ Error loading activities:', error);
+                grid.innerHTML = `
+                    <div style="text-align: center; padding: 2rem; grid-column: 1 / -1;">
+                        <p style="color: #d32f2f;">⚠️ Unable to load activities. Please try again later.</p>
+                    </div>
+                `;
+            }
+        }
+
+        // Load Top Attractions
+        async function loadTopAttractions() {
+            const grid = document.getElementById('attractions-grid');
+            try {
+                console.log('📡 Fetching attractions from backend...');
+                const response = await fetch(`${API_BASE_URL}/attractions`);
+
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+
+                const data = await response.json();
+                console.log('✅ Attractions data received:', data);
+
+                const items = data.attractions.slice(0, 3); // First 3 items
+
+                if (items.length === 0) {
+                    grid.innerHTML = '<p style="text-align: center; padding: 2rem;">No attractions available at the moment.</p>';
+                    return;
+                }
+
+                grid.innerHTML = items.map(item => `
+                    <article class="card">
+                        <img src="${item.image_url}" alt="${item.name}" class="card-image" onerror="this.src='images/placeholder.jpg'">
+                        <div class="card-content">
+                            <h3 class="card-title">${item.name}</h3>
+                            <p class="card-description">${item.description}</p>
+                            <p><strong>📍 Location:</strong> ${item.location}</p>
+                            <a href="pages/public/attractions.html" class="card-link">
+                                Learn more →
+                            </a>
+                        </div>
+                    </article>
+                `).join('');
+
+            } catch (error) {
+                console.error('❌ Error loading attractions:', error);
+                grid.innerHTML = `
+                    <div style="text-align: center; padding: 2rem; grid-column: 1 / -1;">
+                        <p style="color: #d32f2f;">⚠️ Unable to load attractions. Please try again later.</p>
+                    </div>
+                `;
+            }
+        }
+
+        // Load all dynamic content when page loads
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('🚀 Loading dynamic content for homepage...');
+            loadRecommendedAccommodation();
+            loadPopularActivities();
+            loadTopAttractions();
+        });
+    </script>
 </body>
 </html>
