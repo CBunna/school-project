@@ -6,6 +6,22 @@ Student Project - PEF CZU Prague
 
 ---
 
+## 🌐 Deploy to Production
+
+**Already deployed and getting an error?**
+
+→ **[QUICK-FIX.md](QUICK-FIX.md)** - Fix in 2 minutes (just change Root Directory!)
+
+**Want to reconfigure existing deployment?**
+
+→ **[RENDER-RECONFIGURE.md](RENDER-RECONFIGURE.md)** - Update your existing services
+
+**Starting fresh deployment?**
+
+→ **[RENDER-DEPLOYMENT.md](RENDER-DEPLOYMENT.md)** - Complete deployment guide
+
+---
+
 ## Prerequisites
 
 Make sure you have these installed:
