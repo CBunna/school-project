@@ -4,15 +4,24 @@
 let lastHealthCheck = null;
 let healthCheckInterval = null;
 
-// Detect environment and use correct API URL
-const API_BASE_URL = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
-    ? 'http://localhost:3001/api'
-    : 'https://beskydy-backend.onrender.com/api';
+// Detect environment and use correct API URL (only if not already defined by api.js)
+if (typeof API_BASE_URL === 'undefined') {
+    var API_BASE_URL = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
+        ? 'http://localhost:3001/api'
+        : 'https://beskydy-backend.onrender.com/api';
+}
 
 // Check backend and database health
 async function checkBackendHealth() {
     try {
-        const response = await fetch(`${API_BASE_URL}/health`, {
+        // Use API_BASE_URL if available, otherwise construct the URL
+        const healthUrl = typeof API_BASE_URL !== 'undefined'
+            ? `${API_BASE_URL}/health`
+            : (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
+                ? 'http://localhost:3001/api/health'
+                : 'https://beskydy-backend.onrender.com/api/health');
+
+        const response = await fetch(healthUrl, {
             method: 'GET',
             headers: {
                 'Content-Type': 'application/json'
