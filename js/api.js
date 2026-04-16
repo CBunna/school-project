@@ -268,3 +268,20 @@ const ContactAPI = {
  *     console.error('Booking failed:', error);
  * }
  */
+
+/**
+ * Get current user from localStorage
+ * @returns {Object|null} Current user object or null
+ */
+function getCurrentUser() {
+    const userJSON = localStorage.getItem('user');
+    if (userJSON) {
+        try {
+            return JSON.parse(userJSON);
+        } catch (e) {
+            console.error('Error parsing user data:', e);
+            return null;
+        }
+    }
+    return null;
+}

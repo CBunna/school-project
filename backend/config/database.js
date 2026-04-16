@@ -31,7 +31,19 @@ pool.on('connect', () => {
 
 pool.on('error', (err) => {
   console.error('❌ Unexpected error on idle client', err);
-  process.exit(-1);
+  // Don't exit process - let app continue with error responses
+  console.error('Database connection lost. Attempting to reconnect...');
 });
 
+// Health check function
+const checkDatabaseConnection = async () => {
+  try {
+    const result = await pool.query('SELECT NOW()');
+    return { connected: true, timestamp: result.rows[0].now };
+  } catch (error) {
+    return { connected: false, error: error.message };
+  }
+};
+
 module.exports = pool;
+module.exports.checkDatabaseConnection = checkDatabaseConnection;

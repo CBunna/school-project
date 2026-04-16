@@ -305,5 +305,59 @@
     </footer>
     <script src="../../js/main.js"></script>
     <script src="../../js/auth.js"></script>
+    <script src="../../js/api.js"></script>
+    <script>
+        // Handle contact form submission
+        document.getElementById('contact-form').addEventListener('submit', async function(e) {
+            e.preventDefault();
+
+            // Get form values
+            const name = document.getElementById('name').value;
+            const email = document.getElementById('email').value;
+            const phone = document.getElementById('phone').value;
+            const subject = document.getElementById('subject').value;
+            const message = document.getElementById('message').value;
+
+            // Validation
+            if (!name || !email || !message) {
+                showMessage('Please fill in all required fields (Name, Email, Message)', 'error');
+                return;
+            }
+
+            try {
+                console.log('📤 Submitting contact form...');
+
+                const response = await fetch('http://localhost:3001/api/contact', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        name,
+                        email,
+                        phone,
+                        subject,
+                        message
+                    })
+                });
+
+                const data = await response.json();
+
+                if (!response.ok) {
+                    throw new Error(data.error || 'Failed to submit contact form');
+                }
+
+                console.log('✅ Contact form submitted successfully');
+                showMessage(data.message || 'Message sent successfully! We will get back to you soon.', 'success');
+
+                // Clear form
+                document.getElementById('contact-form').reset();
+
+            } catch (error) {
+                console.error('❌ Error submitting contact form:', error);
+                showMessage('Error sending message: ' + error.message, 'error');
+            }
+        });
+    </script>
 </body>
 </html>

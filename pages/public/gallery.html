@@ -51,101 +51,9 @@
             <h2 class="section-title">Discover Beskydy</h2>
             <p class="section-subtitle">Browse our collection of photos showcasing the natural beauty and attractions of the Beskydy region.</p>
 
-            <!-- Gallery Grid -->
-            <div class="gallery-grid">
-                <!-- Nature & Landscapes -->
-                <div class="gallery-item">
-                    <img src="../../images/beskydy.webp" alt="Beskydy Mountains panoramic view">
-                    <div class="gallery-caption">
-                        <h3>Mountain Panorama</h3>
-                        <p>Beautiful view of Beskydy Mountains</p>
-                    </div>
-                </div>
-
-                <div class="gallery-item">
-                    <img src="../../images/lysa-hora.webp" alt="Lysá Hora - highest peak">
-                    <div class="gallery-caption">
-                        <h3>Lysá Hora</h3>
-                        <p>The highest peak at 1,323 meters</p>
-                    </div>
-                </div>
-
-                <div class="gallery-item">
-                    <img src="../../images/Radhošť.jpeg" alt="Radhošť mountain">
-                    <div class="gallery-caption">
-                        <h3>Radhošť</h3>
-                        <p>Sacred mountain with chapel</p>
-                    </div>
-                </div>
-
-                <div class="gallery-item">
-                    <img src="../../images/Pustevny.webp" alt="Pustevny wooden architecture">
-                    <div class="gallery-caption">
-                        <h3>Pustevny</h3>
-                        <p>Traditional wooden architecture</p>
-                    </div>
-                </div>
-
-                <!-- Accommodation -->
-                <div class="gallery-item">
-                    <img src="../../images/hotel-besky.jpeg" alt="Hotel in Beskydy">
-                    <div class="gallery-caption">
-                        <h3>Mountain Hotels</h3>
-                        <p>Comfortable accommodation options</p>
-                    </div>
-                </div>
-
-                <div class="gallery-item">
-                    <img src="../../images/cottage-besky.jpeg" alt="Mountain cottage">
-                    <div class="gallery-caption">
-                        <h3>Cozy Cottages</h3>
-                        <p>Traditional mountain cottages</p>
-                    </div>
-                </div>
-
-                <div class="gallery-item">
-                    <img src="../../images/radhost.jpg" alt="Pension Radhošť">
-                    <div class="gallery-caption">
-                        <h3>Family Pensions</h3>
-                        <p>Warm and welcoming atmosphere</p>
-                    </div>
-                </div>
-
-                <!-- More placeholder items -->
-                <div class="gallery-item">
-                    <div class="gallery-placeholder">
-                        <span>🏔️</span>
-                        <p>Hiking Trails</p>
-                    </div>
-                </div>
-
-                <div class="gallery-item">
-                    <div class="gallery-placeholder">
-                        <span>⛷️</span>
-                        <p>Winter Sports</p>
-                    </div>
-                </div>
-
-                <div class="gallery-item">
-                    <div class="gallery-placeholder">
-                        <span>🚴</span>
-                        <p>Mountain Biking</p>
-                    </div>
-                </div>
-
-                <div class="gallery-item">
-                    <div class="gallery-placeholder">
-                        <span>🎿</span>
-                        <p>Ski Resorts</p>
-                    </div>
-                </div>
-
-                <div class="gallery-item">
-                    <div class="gallery-placeholder">
-                        <span>🏞️</span>
-                        <p>Nature Reserves</p>
-                    </div>
-                </div>
+            <!-- Gallery Grid - Dynamically loaded from database -->
+            <div id="gallery-grid" class="gallery-grid">
+                <p style="text-align: center; padding: 2rem; color: #666;">Loading gallery...</p>
             </div>
         </section>
 
@@ -193,5 +101,156 @@
 
     <script src="../../js/main.js"></script>
     <script src="../../js/auth.js"></script>
+    <script>
+        // Load gallery from database (attractions, accommodation, activities)
+        async function loadGallery() {
+            try {
+                console.log('📡 Fetching gallery items from backend...');
+
+                const galleryGrid = document.getElementById('gallery-grid');
+
+                // Fetch all data sources in parallel
+                const [attractionsRes, accommodationRes, activitiesRes] = await Promise.all([
+                    fetch('http://localhost:3001/api/attractions'),
+                    fetch('http://localhost:3001/api/accommodation'),
+                    fetch('http://localhost:3001/api/activities')
+                ]);
+
+                const attractionsData = await attractionsRes.json();
+                const accommodationData = await accommodationRes.json();
+                const activitiesData = await activitiesRes.json();
+
+                const attractions = attractionsData.attractions || [];
+                const accommodation = accommodationData.accommodation || [];
+                const activities = activitiesData.activities || [];
+
+                console.log(`✅ Loaded ${attractions.length} attractions, ${accommodation.length} accommodation, ${activities.length} activities`);
+
+                // Combine all items for gallery
+                const galleryItems = [];
+
+                // Add attractions
+                attractions.forEach(item => {
+                    if (item.image_url) {
+                        // Fix image path for gallery (from pages/public/ to images/)
+                        const imagePath = item.image_url.replace('../images/', '../../images/');
+                        galleryItems.push({
+                            image: imagePath,
+                            title: item.name,
+                            description: item.location ? `${item.location}${item.elevation ? ' - ' + item.elevation + 'm' : ''}` : item.description,
+                            category: 'Attraction',
+                            link: `attractions.html#attraction-${item.id}`
+                        });
+                    }
+                });
+
+                // Add accommodation
+                accommodation.forEach(item => {
+                    if (item.image_url) {
+                        // Fix image path for gallery
+                        const imagePath = item.image_url.replace('../images/', '../../images/');
+                        galleryItems.push({
+                            image: imagePath,
+                            title: item.name,
+                            description: `${item.type.charAt(0).toUpperCase() + item.type.slice(1)} in ${item.location}`,
+                            category: 'Accommodation',
+                            link: `accommodation.html#accommodation-${item.id}`
+                        });
+                    }
+                });
+
+                // Add activities
+                activities.forEach(item => {
+                    if (item.image_url) {
+                        // Fix image path for gallery
+                        const imagePath = item.image_url.replace('../images/', '../../images/');
+                        galleryItems.push({
+                            image: imagePath,
+                            title: item.name,
+                            description: `${item.type.charAt(0).toUpperCase() + item.type.slice(1)} - ${item.difficulty}`,
+                            category: 'Activity',
+                            link: `activities.html#activity-${item.id}`
+                        });
+                    }
+                });
+
+                // Render gallery
+                if (galleryItems.length === 0) {
+                    galleryGrid.innerHTML = `
+                        <div style="grid-column: 1/-1; text-align: center; padding: 3rem; color: #666;">
+                            <h3>No gallery items yet</h3>
+                            <p>Check back soon for photos of our attractions, accommodation, and activities!</p>
+                        </div>
+                    `;
+                    return;
+                }
+
+                galleryGrid.innerHTML = galleryItems.map(item => `
+                    <div class="gallery-item">
+                        <img src="${item.image}" alt="${item.title}" loading="lazy">
+                        <div class="gallery-caption">
+                            <span class="gallery-category">${item.category}</span>
+                            <h3>${item.title}</h3>
+                            <p>${item.description || ''}</p>
+                            ${item.link ? `<a href="${item.link}" class="gallery-link">View Details →</a>` : ''}
+                        </div>
+                    </div>
+                `).join('');
+
+                console.log(`✅ Gallery rendered with ${galleryItems.length} items`);
+
+            } catch (error) {
+                console.error('❌ Error loading gallery:', error);
+
+                const galleryGrid = document.getElementById('gallery-grid');
+                galleryGrid.innerHTML = `
+                    <div style="grid-column: 1/-1; text-align: center; padding: 2rem; background: #f8d7da; color: #721c24; border-radius: 8px;">
+                        <h3>⚠️ Unable to load gallery</h3>
+                        <p style="margin: 1rem 0;">${error.message}</p>
+                        <p style="font-size: 0.9rem;">Possible reasons:</p>
+                        <ul style="text-align: left; display: inline-block; font-size: 0.9rem;">
+                            <li>Backend server is not running</li>
+                            <li>Database is not connected</li>
+                            <li>Network connection issue</li>
+                        </ul>
+                        <button onclick="loadGallery()" style="margin-top: 1rem; padding: 0.75rem 1.5rem; background: #721c24; color: white; border: none; border-radius: 4px; cursor: pointer;">
+                            Try Again
+                        </button>
+                    </div>
+                `;
+            }
+        }
+
+        // Load gallery when page loads
+        window.addEventListener('DOMContentLoaded', loadGallery);
+    </script>
+
+    <style>
+        .gallery-category {
+            display: inline-block;
+            background: rgba(0,0,0,0.7);
+            color: white;
+            padding: 0.3rem 0.6rem;
+            border-radius: 4px;
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 0.5rem;
+        }
+
+        .gallery-link {
+            display: inline-block;
+            margin-top: 0.5rem;
+            color: #0066cc;
+            text-decoration: none;
+            font-size: 0.9rem;
+            transition: color 0.3s;
+        }
+
+        .gallery-link:hover {
+            color: #004499;
+            text-decoration: underline;
+        }
+    </style>
 </body>
 </html>

@@ -160,17 +160,30 @@ function logout() {
     showMessage('Logged out successfully', 'success');
 
     setTimeout(() => {
-        // Determine correct path to index.html based on current location
-        let indexPath;
+        // Get the current path
+        const currentPath = window.location.pathname;
 
-        if (window.location.pathname.includes('/pages/admin/')) {
+        // Determine correct path to index.html based on current location
+        let indexPath = '/';
+
+        // If we're in a subdirectory, calculate relative path
+        if (currentPath.includes('/pages/admin/')) {
             indexPath = '../../index.html';
-        } else if (window.location.pathname.includes('/pages/')) {
+        } else if (currentPath.includes('/pages/user/')) {
+            indexPath = '../../index.html';
+        } else if (currentPath.includes('/pages/auth/')) {
+            indexPath = '../../index.html';
+        } else if (currentPath.includes('/pages/public/')) {
+            indexPath = '../../index.html';
+        } else if (currentPath.includes('/pages/booking/')) {
+            indexPath = '../../index.html';
+        } else if (currentPath.includes('/pages/')) {
             indexPath = '../index.html';
         } else {
             indexPath = 'index.html';
         }
 
+        console.log('Logging out, redirecting to:', indexPath);
         window.location.href = indexPath;
     }, 1000);
 }
@@ -238,8 +251,9 @@ function updateNavigation() {
         if (!existingProfile) {
             // Add user menu
             const userMenu = document.createElement('li');
-            userMenu.innerHTML = user.userType === 'admin'
-                ? `<a href="${basePath}admin/admin-dashboard.html">Admin</a>`
+            const isUserAdmin = user.role === 'admin' || user.userType === 'admin';
+            userMenu.innerHTML = isUserAdmin
+                ? `<a href="${basePath}admin/admin-dashboard.html">Admin Dashboard</a>`
                 : `<a href="${basePath}user/user-profile.html">Profile</a>`;
             nav.appendChild(userMenu);
         }

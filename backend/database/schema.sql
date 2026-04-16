@@ -2,6 +2,7 @@
 -- PostgreSQL 15+
 
 -- Drop tables if they exist (for clean setup)
+DROP TABLE IF EXISTS favorites CASCADE;
 DROP TABLE IF EXISTS bookings CASCADE;
 DROP TABLE IF EXISTS contacts CASCADE;
 DROP TABLE IF EXISTS activities CASCADE;
@@ -95,6 +96,16 @@ CREATE TABLE contacts (
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
+-- Favorites table (users can save favorite attractions, accommodation, or activities)
+CREATE TABLE favorites (
+    id SERIAL PRIMARY KEY,
+    user_id INTEGER REFERENCES users(id) ON DELETE CASCADE,
+    item_type VARCHAR(50) CHECK (item_type IN ('attraction', 'accommodation', 'activity')),
+    item_id INTEGER NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    UNIQUE(user_id, item_type, item_id)
+);
+
 -- Create indexes for better performance
 CREATE INDEX idx_users_email ON users(email);
 CREATE INDEX idx_bookings_user_id ON bookings(user_id);
@@ -102,6 +113,8 @@ CREATE INDEX idx_bookings_status ON bookings(status);
 CREATE INDEX idx_accommodation_type ON accommodation(type);
 CREATE INDEX idx_activities_type ON activities(type);
 CREATE INDEX idx_contacts_status ON contacts(status);
+CREATE INDEX idx_favorites_user_id ON favorites(user_id);
+CREATE INDEX idx_favorites_item_type ON favorites(item_type);
 
 -- Insert sample data
 
@@ -175,3 +188,4 @@ SELECT COUNT(*) as total_accommodation FROM accommodation;
 SELECT COUNT(*) as total_activities FROM activities;
 SELECT COUNT(*) as total_bookings FROM bookings;
 SELECT COUNT(*) as total_contacts FROM contacts;
+SELECT COUNT(*) as total_favorites FROM favorites;

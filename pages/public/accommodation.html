@@ -50,82 +50,11 @@
             <h2 class="section-title">Recommended Accommodation</h2>
             <p class="section-subtitle">Choose from our verified partners</p>
             
-            <div class="card-grid">
-                <!-- Hotel with hProduct microformat -->
-                <article class="card hproduct">
-                    <img src="../../images/hotel-besky.jpeg" alt="Hotel Beskyd - modern building with mountain view" class="card-image photo">
-                    <div class="card-content">
-                        <h3 class="card-title fn">Hotel Beskyd ****</h3>
-                        <p class="card-description description">Luxury hotel in the center of Rožnov with wellness center, restaurant and beautiful views of Beskydy.</p>
-                        <p><strong>📍 Location:</strong> Rožnov pod Radhoštěm</p>
-                        <p><strong>💰 Price from:</strong> <span class="price">$90</span> / night</p>
-                        <p><strong>⭐ Rating:</strong> 4.5/5</p>
-                        <ul class="info-list">
-                            <li>Wellness and sauna</li>
-                            <li>Restaurant with local cuisine</li>
-                            <li>Free parking</li>
-                            <li>Wi-Fi throughout</li>
-                        </ul>
-                        <a href="../booking/booking.html?type=accommodation&item=Hotel+Beskyd" class="card-link url">Book Now →</a>
-                    </div>
-                </article>
-
-                <!-- Pension with hProduct -->
-                <article class="card hproduct">
-                    <img src="../../images/radhost.jpg" alt="Penzion Radhošť" class="card-image photo">
-                    <div class="card-content">
-                        <h3 class="card-title fn">Pension Radhošť ***</h3>
-                        <p class="card-description description">Family pension with pleasant atmosphere and home cooking. Ideal starting point for mountain hikes.</p>
-                        <p><strong>📍 Location:</strong> Frenštát</p>
-                        <p><strong>💰 Price from:</strong> <span class="price">$60</span> / night</p>
-                        <p><strong>⭐ Rating:</strong> 4.7/5</p>
-                        <ul class="info-list">
-                            <li>Breakfast included</li>
-                            <li>Bike rental</li>
-                            <li>Outdoor seating</li>
-                            <li>Family-friendly</li>
-                        </ul>
-                        <a href="../booking/booking.html?type=accommodation&item=Pension+Radhošť" class="card-link url">Book Now →</a>
-                    </div>
-                </article>
-
-                <!-- Mountain Cottage with hProduct -->
-                <article class="card hproduct">
-                    <img src="../../images/cottage-besky.jpeg" alt="Mountain cottage at Pustevny" class="card-image photo">
-                    <div class="card-content">
-                        <h3 class="card-title fn">Mountain Cottage Pustevny</h3>
-                        <p class="card-description description">Authentic mountain cottage directly at Pustevny at 3,340 ft elevation. Unique mountain stay experience.</p>
-                        <p><strong>📍 Location:</strong> Pustevny</p>
-                        <p><strong>💰 Price from:</strong> <span class="price">$75</span> / night</p>
-                        <p><strong>⭐ Rating:</strong> 4.6/5</p>
-                        <ul class="info-list">
-                            <li>Restaurant on-site</li>
-                            <li>Cable car access</li>
-                            <li>Valley views</li>
-                            <li>Traditional architecture</li>
-                        </ul>
-                        <a href="../booking/booking.html?type=accommodation&item=Mountain+Cottage+Pustevny" class="card-link url">Book Now →</a>
-                    </div>
-                </article>
-
-                <!-- Apartments with hProduct -->
-                <article class="card hproduct">
-                    <img src="../../images/apartman-ostravice.jpg" alt="Modern apartment in Ostravice" class="card-image photo">
-                    <div class="card-content">
-                        <h3 class="card-title fn">Ostravice Apartments</h3>
-                        <p class="card-description description">Modern apartments with fully equipped kitchen and terrace. Ideal for families and longer stays.</p>
-                        <p><strong>📍 Location:</strong> Ostravice</p>
-                        <p><strong>💰 Price from:</strong> <span class="price">$70</span> / night</p>
-                        <p><strong>⭐ Rating:</strong> 4.8/5</p>
-                        <ul class="info-list">
-                            <li>Full kitchen</li>
-                            <li>Balcony/terrace</li>
-                            <li>Parking included</li>
-                            <li>Family suitable</li>
-                        </ul>
-                        <a href="../booking/booking.html?type=accommodation&item=Ostravice+Apartments" class="card-link url">Book Now →</a>
-                    </div>
-                </article>
+            <div class="card-grid" id="accommodation-grid">
+                <!-- Accommodation cards will be loaded from database -->
+                <p style="grid-column: 1 / -1; text-align: center; padding: 2rem; color: #666;">
+                    Loading accommodation...
+                </p>
             </div>
         </section>
 
@@ -216,5 +145,199 @@
     </footer>
     <script src="../../js/main.js"></script>
     <script src="../../js/auth.js"></script>
+    <script src="../../js/api.js"></script>
+    <script>
+        // Load accommodation from backend database
+        async function loadAccommodation() {
+            const grid = document.getElementById('accommodation-grid');
+
+            try {
+                console.log('📡 Fetching accommodation from backend...');
+
+                const response = await fetch('http://localhost:3001/api/accommodation');
+                const data = await response.json();
+
+                if (!response.ok) {
+                    throw new Error(data.error || 'Failed to load accommodation');
+                }
+
+                const accommodations = data.accommodation;
+                console.log(`✅ Loaded ${accommodations.length} accommodations`);
+
+                if (accommodations.length === 0) {
+                    grid.innerHTML = `
+                        <p style="grid-column: 1 / -1; text-align: center; padding: 2rem; color: #666;">
+                            No accommodation available at the moment.
+                        </p>
+                    `;
+                    return;
+                }
+
+                // Display accommodation cards
+                grid.innerHTML = accommodations.map(acc => {
+                    const amenitiesList = acc.amenities && acc.amenities.length > 0
+                        ? acc.amenities.map(a => `<li>${a}</li>`).join('')
+                        : '<li>See details for amenities</li>';
+
+                    // Check if user is logged in
+                    const user = JSON.parse(localStorage.getItem('user') || 'null');
+                    const favoriteButton = user ? `
+                        <button onclick="toggleFavorite('accommodation', ${acc.id}, this)"
+                                class="favorite-btn"
+                                data-item-type="accommodation"
+                                data-item-id="${acc.id}"
+                                style="background: transparent; border: 2px solid #dc3545; color: #dc3545; padding: 0.5rem 1rem; border-radius: 4px; cursor: pointer; margin-right: 0.5rem; transition: all 0.3s;">
+                            ❤️ Save to Favorites
+                        </button>
+                    ` : '';
+
+                    return `
+                        <article class="card hproduct" id="accommodation-${acc.id}">
+                            <img src="${acc.image_url || '../../images/placeholder.jpg'}" alt="${acc.name}" class="card-image photo">
+                            <div class="card-content">
+                                <h3 class="card-title fn">${acc.name}</h3>
+                                <p class="card-description description">${acc.description || 'Comfortable accommodation in Beskydy region.'}</p>
+                                <p><strong>📍 Location:</strong> ${acc.location}</p>
+                                <p><strong>💰 Price from:</strong> <span class="price">$${parseFloat(acc.price_per_night).toFixed(0)}</span> / night</p>
+                                <p><strong>⭐ Rating:</strong> ${acc.rating || 'N/A'}/5</p>
+                                <p><strong>👥 Capacity:</strong> ${acc.capacity} ${acc.capacity === 1 ? 'person' : 'people'}</p>
+                                <ul class="info-list">
+                                    ${amenitiesList}
+                                </ul>
+                                <div style="margin-top: 1rem;">
+                                    ${favoriteButton}
+                                    ${acc.available ?
+                                        `<a href="../booking/booking.html?type=accommodation&id=${acc.id}&item=${encodeURIComponent(acc.name)}" class="card-link url" style="display: inline-block;">Book Now →</a>` :
+                                        `<p style="color: #dc3545; font-weight: bold;">Currently Unavailable</p>`
+                                    }
+                                </div>
+                            </div>
+                        </article>
+                    `;
+                }).join('');
+
+            } catch (error) {
+                console.error('❌ Error loading accommodation:', error);
+                grid.innerHTML = `
+                    <div style="grid-column: 1 / -1; text-align: center; padding: 2rem; color: #dc3545;">
+                        <p style="font-size: 1.2em; margin-bottom: 1rem;">⚠️ Unable to load accommodation</p>
+                        <p>${error.message}</p>
+                        <p style="margin-top: 1rem;">
+                            <strong>Possible reasons:</strong><br>
+                            • Backend server is not running<br>
+                            • Database is not connected<br>
+                            • Network connection issue
+                        </p>
+                        <p style="margin-top: 1rem;">
+                            <button onclick="loadAccommodation()" class="cta-button" style="display: inline-block;">
+                                Try Again
+                            </button>
+                        </p>
+                    </div>
+                `;
+            }
+        }
+
+        // Toggle favorite
+        async function toggleFavorite(itemType, itemId, button) {
+            const user = JSON.parse(localStorage.getItem('user') || 'null');
+
+            if (!user) {
+                alert('Please login to save favorites');
+                window.location.href = '../auth/login.html';
+                return;
+            }
+
+            try {
+                // Check if already favorited
+                const isFavorited = button.classList.contains('favorited');
+
+                if (isFavorited) {
+                    // Remove from favorites
+                    const favoriteId = button.dataset.favoriteId;
+                    await apiRequest(`/favorites/${favoriteId}`, {
+                        method: 'DELETE'
+                    });
+
+                    button.classList.remove('favorited');
+                    button.style.background = 'transparent';
+                    button.style.color = '#dc3545';
+                    button.innerHTML = '❤️ Save to Favorites';
+                    delete button.dataset.favoriteId;
+
+                    showMessage('Removed from favorites', 'success');
+                } else {
+                    // Add to favorites
+                    const response = await apiRequest('/favorites', {
+                        method: 'POST',
+                        body: JSON.stringify({
+                            item_type: itemType,
+                            item_id: itemId
+                        })
+                    });
+
+                    button.classList.add('favorited');
+                    button.style.background = '#dc3545';
+                    button.style.color = 'white';
+                    button.innerHTML = '❤️ Saved!';
+                    button.dataset.favoriteId = response.favorite.id;
+
+                    showMessage('Added to favorites!', 'success');
+                }
+
+            } catch (error) {
+                console.error('Error toggling favorite:', error);
+                showMessage('Error: ' + error.message, 'error');
+            }
+        }
+
+        // Simple message display function
+        function showMessage(message, type) {
+            const messageDiv = document.createElement('div');
+            messageDiv.style.cssText = `
+                position: fixed;
+                top: 100px;
+                right: 20px;
+                background: ${type === 'success' ? '#28a745' : '#dc3545'};
+                color: white;
+                padding: 1rem 1.5rem;
+                border-radius: 8px;
+                box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+                z-index: 10000;
+                animation: slideIn 0.3s ease-out;
+            `;
+            messageDiv.textContent = message;
+            document.body.appendChild(messageDiv);
+
+            setTimeout(() => {
+                messageDiv.remove();
+            }, 3000);
+        }
+
+        // Load accommodation when page loads
+        window.addEventListener('DOMContentLoaded', loadAccommodation);
+    </script>
+
+    <style>
+        @keyframes slideIn {
+            from {
+                transform: translateX(400px);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+
+        .favorite-btn:hover {
+            transform: scale(1.05);
+        }
+
+        .favorite-btn.favorited {
+            background: #dc3545 !important;
+            color: white !important;
+        }
+    </style>
 </body>
 </html>

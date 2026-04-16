@@ -48,6 +48,8 @@ const accommodationRoutes = require('./routes/accommodation.routes');
 const activitiesRoutes = require('./routes/activities.routes');
 const bookingsRoutes = require('./routes/bookings.routes');
 const contactRoutes = require('./routes/contact.routes');
+const favoritesRoutes = require('./routes/favorites.routes');
+const usersRoutes = require('./routes/users.routes');
 const setupRoutes = require('./routes/setup.routes');
 
 // API Routes
@@ -57,14 +59,26 @@ app.use('/api/accommodation', accommodationRoutes);
 app.use('/api/activities', activitiesRoutes);
 app.use('/api/bookings', bookingsRoutes);
 app.use('/api/contact', contactRoutes);
+app.use('/api/favorites', favoritesRoutes);
+app.use('/api/users', usersRoutes);
 app.use('/api/setup', setupRoutes);
 
 // Health check endpoint
-app.get('/api/health', (req, res) => {
+app.get('/api/health', async (req, res) => {
+  const { checkDatabaseConnection } = require('./config/database');
+  const dbHealth = await checkDatabaseConnection();
+
   res.json({
-    status: 'OK',
+    status: dbHealth.connected ? 'OK' : 'DEGRADED',
     message: 'Beskydy Tourism API is running',
-    timestamp: new Date().toISOString()
+    timestamp: new Date().toISOString(),
+    database: dbHealth.connected ? {
+      status: 'connected',
+      timestamp: dbHealth.timestamp
+    } : {
+      status: 'disconnected',
+      error: dbHealth.error
+    }
   });
 });
 
@@ -80,7 +94,8 @@ app.get('/', (req, res) => {
       accommodation: '/api/accommodation',
       activities: '/api/activities',
       bookings: '/api/bookings',
-      contact: '/api/contact'
+      contact: '/api/contact',
+      favorites: '/api/favorites'
     }
   });
 });

@@ -252,6 +252,8 @@
 
     <script src="../../js/main.js"></script>
     <script src="../../js/auth.js"></script>
+    <script src="../../js/api.js"></script>
+    <script src="../../js/database-status.js"></script>
     <script>
         // Simple logout function
         function logout() {
@@ -281,71 +283,109 @@
                     document.getElementById('phone').value = user.phone || '';
                 }
 
-                // Load and display real bookings from localStorage
+                // Load and display real bookings and favorites from backend
                 loadUserBookings();
+                loadUserFavorites();
             }
         });
 
-        // Function to load user bookings from localStorage
-        function loadUserBookings() {
-            const bookings = JSON.parse(localStorage.getItem('bookings') || '[]');
+        // Function to load user bookings from backend API
+        async function loadUserBookings() {
             const bookingList = document.querySelector('.booking-list');
 
-            if (bookings.length === 0) {
+            try {
+                console.log('📡 Fetching user bookings from backend...');
+
+                const response = await apiRequest('/bookings/my-bookings');
+                const bookings = response.bookings;
+
+                console.log(`✅ Loaded ${bookings.length} bookings`);
+
+                if (bookings.length === 0) {
+                    bookingList.innerHTML = `
+                        <div style="text-align: center; padding: 40px;">
+                            <p style="font-size: 1.1em; color: #666;">No bookings yet.</p>
+                            <p><a href="../booking/booking.html" class="cta-button" style="display: inline-block; margin-top: 20px;">Make a Booking</a></p>
+                        </div>
+                    `;
+                    return;
+                }
+
+                // Display bookings
+                bookingList.innerHTML = bookings.map((booking) => {
+                    const checkIn = new Date(booking.check_in_date).toLocaleDateString();
+                    const checkOut = booking.check_out_date ?
+                        ' - ' + new Date(booking.check_out_date).toLocaleDateString() : '';
+
+                    return `
+                        <div class="booking-item">
+                            <div class="booking-header">
+                                <h3>${booking.booking_type === 'accommodation' ? 'Accommodation' : 'Activity'} Booking</h3>
+                                <span class="booking-status status-${booking.status}">${booking.status.charAt(0).toUpperCase() + booking.status.slice(1)}</span>
+                            </div>
+                            <div class="booking-details">
+                                <p><strong>Type:</strong> ${booking.booking_type}</p>
+                                <p><strong>Dates:</strong> ${checkIn}${checkOut}</p>
+                                <p><strong>Guests:</strong> ${booking.number_of_guests}</p>
+                                <p><strong>Total Price:</strong> $${parseFloat(booking.total_price).toFixed(2)}</p>
+                                <p><strong>Booking ID:</strong> #${booking.id}</p>
+                                ${booking.special_requests ? `<p><strong>Special Requests:</strong> ${booking.special_requests}</p>` : ''}
+                                <p><small style="color: #666;">Booked on: ${new Date(booking.created_at).toLocaleDateString()}</small></p>
+                            </div>
+                            <div class="booking-actions">
+                                <button class="btn-small" onclick="viewBookingDetails(${booking.id})">View Details</button>
+                                ${booking.status !== 'cancelled' ? `<button class="btn-small btn-danger" onclick="cancelBooking(${booking.id})">Cancel</button>` : ''}
+                            </div>
+                        </div>
+                    `;
+                }).join('');
+
+            } catch (error) {
+                console.error('❌ Error loading bookings:', error);
                 bookingList.innerHTML = `
-                    <div style="text-align: center; padding: 40px;">
-                        <p style="font-size: 1.1em; color: #666;">No bookings yet.</p>
-                        <p><a href="../booking/booking.html" class="cta-button" style="display: inline-block; margin-top: 20px;">Make a Booking</a></p>
+                    <div style="text-align: center; padding: 40px; color: #dc3545;">
+                        <p>Error loading bookings. Please refresh the page.</p>
+                        <p><small>${error.message}</small></p>
                     </div>
                 `;
-                return;
             }
-
-            // Display bookings
-            bookingList.innerHTML = bookings.map((booking, index) => {
-                const itemName = booking.type === 'accommodation' ? booking.accommodation : booking.activity;
-                const dates = booking.checkIn && booking.checkOut
-                    ? `${new Date(booking.checkIn).toLocaleDateString()} - ${new Date(booking.checkOut).toLocaleDateString()}`
-                    : new Date(booking.createdAt).toLocaleDateString();
-
-                return `
-                    <div class="booking-item">
-                        <div class="booking-header">
-                            <h3>${itemName || 'Booking'}</h3>
-                            <span class="booking-status status-${booking.status || 'confirmed'}">${booking.status || 'Confirmed'}</span>
-                        </div>
-                        <div class="booking-details">
-                            <p><strong>Type:</strong> ${booking.type === 'accommodation' ? 'Accommodation' : 'Activity'}</p>
-                            <p><strong>Dates:</strong> ${dates}</p>
-                            ${booking.guests ? `<p><strong>Guests:</strong> ${booking.guests}</p>` : ''}
-                            <p><strong>Booking ID:</strong> BES-${booking.id}</p>
-                            ${booking.specialRequests ? `<p><strong>Special Requests:</strong> ${booking.specialRequests}</p>` : ''}
-                        </div>
-                        <div class="booking-actions">
-                            <button class="btn-small" onclick="viewBookingDetails(${booking.id})">View Details</button>
-                            <button class="btn-small btn-secondary" onclick="cancelBooking(${booking.id})">Cancel</button>
-                        </div>
-                    </div>
-                `;
-            }).join('');
         }
 
         // Function to view booking details
-        function viewBookingDetails(bookingId) {
-            const bookings = JSON.parse(localStorage.getItem('bookings') || '[]');
-            const booking = bookings.find(b => b.id === bookingId);
+        async function viewBookingDetails(bookingId) {
+            try {
+                const response = await apiRequest(`/bookings/${bookingId}`);
+                const booking = response.booking;
 
-            if (booking) {
-                alert(`Booking Details:\n\nID: BES-${booking.id}\nType: ${booking.type}\nItem: ${booking.accommodation || booking.activity}\nDates: ${booking.checkIn} to ${booking.checkOut}\nGuests: ${booking.guests}\nContact: ${booking.email}\nPhone: ${booking.phone}\nSpecial Requests: ${booking.specialRequests || 'None'}`);
+                const checkIn = new Date(booking.check_in_date).toLocaleDateString();
+                const checkOut = booking.check_out_date ?
+                    new Date(booking.check_out_date).toLocaleDateString() : 'N/A';
+
+                alert(`Booking Details:
+
+ID: #${booking.id}
+Type: ${booking.booking_type}
+Dates: ${checkIn} - ${checkOut}
+Guests: ${booking.number_of_guests}
+Total Price: $${parseFloat(booking.total_price).toFixed(2)}
+Status: ${booking.status}
+Special Requests: ${booking.special_requests || 'None'}
+Booked on: ${new Date(booking.created_at).toLocaleString()}`);
+
+            } catch (error) {
+                showMessage('Error loading booking details: ' + error.message, 'error');
             }
         }
 
         // Function to cancel booking
-        function cancelBooking(bookingId) {
-            if (confirm('Are you sure you want to cancel this booking?')) {
-                let bookings = JSON.parse(localStorage.getItem('bookings') || '[]');
-                bookings = bookings.filter(b => b.id !== bookingId);
-                localStorage.setItem('bookings', JSON.stringify(bookings));
+        async function cancelBooking(bookingId) {
+            if (!confirm('Are you sure you want to cancel this booking?')) return;
+
+            try {
+                await apiRequest(`/bookings/${bookingId}/status`, {
+                    method: 'PUT',
+                    body: JSON.stringify({ status: 'cancelled' })
+                });
 
                 showMessage('Booking cancelled successfully', 'success');
 
@@ -353,6 +393,85 @@
                 setTimeout(() => {
                     loadUserBookings();
                 }, 1000);
+
+            } catch (error) {
+                showMessage('Error cancelling booking: ' + error.message, 'error');
+            }
+        }
+
+        // Function to load user favorites from backend API
+        async function loadUserFavorites() {
+            const favoritesGrid = document.querySelector('.favorites-grid');
+
+            try {
+                console.log('📡 Fetching user favorites from backend...');
+
+                const response = await apiRequest('/favorites');
+                const favorites = response.favorites;
+
+                console.log(`✅ Loaded ${favorites.length} favorites`);
+
+                if (favorites.length === 0) {
+                    favoritesGrid.innerHTML = `
+                        <div style="text-align: center; padding: 40px; grid-column: 1 / -1;">
+                            <p style="font-size: 1.1em; color: #666;">No favorites yet.</p>
+                            <p><a href="../public/attractions.html" class="cta-button" style="display: inline-block; margin-top: 20px;">Explore Attractions</a></p>
+                        </div>
+                    `;
+                    return;
+                }
+
+                // Display favorites
+                favoritesGrid.innerHTML = favorites.map((favorite) => {
+                    const item = favorite.item_details;
+                    if (!item) return '';
+
+                    const imageUrl = item.image_url || '../images/placeholder.jpg';
+                    const name = item.name || 'Unknown';
+                    const description = item.description ?
+                        (item.description.length > 80 ? item.description.substring(0, 80) + '...' : item.description) :
+                        favorite.item_type;
+
+                    return `
+                        <div class="favorite-card">
+                            <img src="${imageUrl}" alt="${name}" style="width: 100%; height: 200px; object-fit: cover; border-radius: 8px 8px 0 0;">
+                            <h3>${name}</h3>
+                            <p>${description}</p>
+                            <p><small style="color: #666; text-transform: capitalize;">${favorite.item_type}</small></p>
+                            <button class="btn-small btn-danger" onclick="removeFavorite(${favorite.favorite_id})">Remove</button>
+                        </div>
+                    `;
+                }).join('');
+
+            } catch (error) {
+                console.error('❌ Error loading favorites:', error);
+                favoritesGrid.innerHTML = `
+                    <div style="text-align: center; padding: 40px; color: #dc3545; grid-column: 1 / -1;">
+                        <p>Error loading favorites. Please refresh the page.</p>
+                        <p><small>${error.message}</small></p>
+                    </div>
+                `;
+            }
+        }
+
+        // Function to remove favorite
+        async function removeFavorite(favoriteId) {
+            if (!confirm('Are you sure you want to remove this from favorites?')) return;
+
+            try {
+                await apiRequest(`/favorites/${favoriteId}`, {
+                    method: 'DELETE'
+                });
+
+                showMessage('Removed from favorites successfully', 'success');
+
+                // Reload favorites
+                setTimeout(() => {
+                    loadUserFavorites();
+                }, 1000);
+
+            } catch (error) {
+                showMessage('Error removing favorite: ' + error.message, 'error');
             }
         }
     </script>

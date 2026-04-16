@@ -98,6 +98,106 @@
             </div>
         </section>
 
+        <section style="background: var(--bg-light); padding: 4rem 0;">
+            <div class="container">
+                <h2 class="section-title">Winter Activities</h2>
+                <p class="section-subtitle">Beskydy in white</p>
+                
+                <div class="card-grid">
+                    <article class="card">
+                        <div class="card-content">
+                            <h3 class="card-title">⛷️ Downhill Skiing</h3>
+                            <p class="card-description">Modern ski resorts with quality equipment, artificial snow-making and night skiing.</p>
+                            <ul class="info-list">
+                                <li>Ski resort Lyžařská</li>
+                                <li>Ski Ostravice</li>
+                                <li>Ski Troják</li>
+                                <li>Ski rentals</li>
+                                <li>Ski school</li>
+                            </ul>
+                            <p><strong>Season:</strong> December - March</p>
+                            <p><strong>Difficulty:</strong> Easy to challenging</p>
+                        </div>
+                    </article>
+                    
+                    <article class="card">
+                        <div class="card-content">
+                            <h3 class="card-title">🎿 Cross-Country Skiing</h3>
+                            <p class="card-description">Hundreds of miles of groomed cross-country trails. Ideal conditions for classic and skating technique.</p>
+                            <ul class="info-list">
+                                <li>Cross-country trail network</li>
+                                <li>Night skiing</li>
+                                <li>Groomed trails</li>
+                                <li>Ski rentals</li>
+                            </ul>
+                            <p><strong>Season:</strong> December - March</p>
+                            <p><strong>Difficulty:</strong> Easy to moderate</p>
+                        </div>
+                    </article>
+                    
+                    <article class="card">
+                        <div class="card-content">
+                            <h3 class="card-title">🛷 Sledding</h3>
+                            <p class="card-description">Fun for the whole family on groomed sledding runs with possibility of evening lighting.</p>
+                            <ul class="info-list">
+                                <li>Sledding runs</li>
+                                <li>Bob run Malenovice</li>
+                                <li>Sled rentals</li>
+                                <li>Suitable for children</li>
+                            </ul>
+                            <p><strong>Season:</strong> December - March</p>
+                            <p><strong>Difficulty:</strong> Easy</p>
+                        </div>
+                    </article>
+                </div>
+            </div>
+        </section>
+
+        <section class="container">
+            <h2 class="section-title">Cultural Activities</h2>
+            <p class="section-subtitle">Learn about the rich heritage of Beskydy</p>
+            
+            <div class="card-grid">
+                <article class="card">
+                    <div class="card-content">
+                        <h3 class="card-title">🎭 Festivals and Events</h3>
+                        <p class="card-description">Year-round calendar of cultural events from folklore festivals to modern music concerts.</p>
+                        <ul class="info-list">
+                            <li>Beskydy Folklore Festival</li>
+                            <li>Radegast Day</li>
+                            <li>Christmas markets</li>
+                            <li>Music festivals</li>
+                        </ul>
+                    </div>
+                </article>
+                
+                <article class="card">
+                    <div class="card-content">
+                        <h3 class="card-title">🏛️ Museums and Galleries</h3>
+                        <p class="card-description">Learn about the region's history in local museums, galleries and heritage sites.</p>
+                        <ul class="info-list">
+                            <li>Wallachian Museum</li>
+                            <li>Leoš Janáček's birthplace</li>
+                            <li>Nový Jičín Museum</li>
+                            <li>Art galleries</li>
+                        </ul>
+                    </div>
+                </article>
+                
+                <article class="card">
+                    <div class="card-content">
+                        <h3 class="card-title">🍴 Gastronomy</h3>
+                        <p class="card-description">Taste traditional Wallachian cuisine with local specialties and regional products.</p>
+                        <ul class="info-list">
+                            <li>Wallachian frgál (sweet pastry)</li>
+                            <li>Yeast buns</li>
+                            <li>Sheep cheeses</li>
+                            <li>Regional breweries</li>
+                        </ul>
+                    </div>
+                </article>
+            </div>
+        </section>
 
         <section style="background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%); color: var(--white); padding: 4rem 0; text-align: center;">
             <div class="container">
@@ -161,7 +261,6 @@
     </footer>
     <script src="../../js/main.js"></script>
     <script src="../../js/auth.js"></script>
-    <script src="../../js/api.js"></script>
     <script>
         // Load activities from backend database
         async function loadActivities() {
@@ -201,20 +300,8 @@
 
                     const emoji = typeEmoji[act.type] || '🏔️';
 
-                    // Check if user is logged in
-                    const user = JSON.parse(localStorage.getItem('user') || 'null');
-                    const favoriteButton = user ? `
-                        <button onclick="toggleFavorite('activity', ${act.id}, this)"
-                                class="favorite-btn"
-                                data-item-type="activity"
-                                data-item-id="${act.id}"
-                                style="background: transparent; border: 2px solid #dc3545; color: #dc3545; padding: 0.5rem 1rem; border-radius: 4px; cursor: pointer; margin-right: 0.5rem; margin-bottom: 0.5rem; transition: all 0.3s;">
-                            ❤️ Save to Favorites
-                        </button>
-                    ` : '';
-
                     return `
-                        <article class="card" id="activity-${act.id}">
+                        <article class="card">
                             ${act.image_url ? `<img src="${act.image_url}" alt="${act.name}" class="card-image">` : ''}
                             <div class="card-content">
                                 <h3 class="card-title">${emoji} ${act.name}</h3>
@@ -223,13 +310,10 @@
                                 <p><strong>Difficulty:</strong> ${act.difficulty || 'N/A'}</p>
                                 <p><strong>Season:</strong> ${act.season || 'Year-round'}</p>
                                 <p><strong>Price:</strong> $${parseFloat(act.price).toFixed(2)}</p>
-                                <div style="margin-top: 1rem;">
-                                    ${favoriteButton}
-                                    ${act.available ?
-                                        `<a href="../booking/booking.html?type=activity&id=${act.id}&item=${encodeURIComponent(act.name)}" class="card-link" style="display: inline-block;">Book Now →</a>` :
-                                        `<p style="color: #dc3545; font-weight: bold;">Currently Unavailable</p>`
-                                    }
-                                </div>
+                                ${act.available ?
+                                    `<a href="../booking/booking.html?type=activity&id=${act.id}&item=${encodeURIComponent(act.name)}" class="card-link">Book Now →</a>` :
+                                    `<p style="color: #dc3545; font-weight: bold;">Currently Unavailable</p>`
+                                }
                             </div>
                         </article>
                     `;
@@ -257,90 +341,8 @@
             }
         }
 
-        // Toggle favorite
-        async function toggleFavorite(itemType, itemId, button) {
-            const user = JSON.parse(localStorage.getItem('user') || 'null');
-
-            if (!user) {
-                alert('Please login to save favorites');
-                window.location.href = '../auth/login.html';
-                return;
-            }
-
-            try {
-                const isFavorited = button.classList.contains('favorited');
-
-                if (isFavorited) {
-                    const favoriteId = button.dataset.favoriteId;
-                    await apiRequest(`/favorites/${favoriteId}`, {
-                        method: 'DELETE'
-                    });
-
-                    button.classList.remove('favorited');
-                    button.style.background = 'transparent';
-                    button.style.color = '#dc3545';
-                    button.innerHTML = '❤️ Save to Favorites';
-                    delete button.dataset.favoriteId;
-
-                    showMessage('Removed from favorites', 'success');
-                } else {
-                    const response = await apiRequest('/favorites', {
-                        method: 'POST',
-                        body: JSON.stringify({
-                            item_type: itemType,
-                            item_id: itemId
-                        })
-                    });
-
-                    button.classList.add('favorited');
-                    button.style.background = '#dc3545';
-                    button.style.color = 'white';
-                    button.innerHTML = '❤️ Saved!';
-                    button.dataset.favoriteId = response.favorite.id;
-
-                    showMessage('Added to favorites!', 'success');
-                }
-
-            } catch (error) {
-                console.error('Error toggling favorite:', error);
-                showMessage('Error: ' + error.message, 'error');
-            }
-        }
-
-        function showMessage(message, type) {
-            const messageDiv = document.createElement('div');
-            messageDiv.style.cssText = `
-                position: fixed;
-                top: 100px;
-                right: 20px;
-                background: ${type === 'success' ? '#28a745' : '#dc3545'};
-                color: white;
-                padding: 1rem 1.5rem;
-                border-radius: 8px;
-                box-shadow: 0 4px 12px rgba(0,0,0,0.3);
-                z-index: 10000;
-            `;
-            messageDiv.textContent = message;
-            document.body.appendChild(messageDiv);
-
-            setTimeout(() => {
-                messageDiv.remove();
-            }, 3000);
-        }
-
         // Load activities when page loads
         window.addEventListener('DOMContentLoaded', loadActivities);
     </script>
-
-    <style>
-        .favorite-btn:hover {
-            transform: scale(1.05);
-        }
-
-        .favorite-btn.favorited {
-            background: #dc3545 !important;
-            color: white !important;
-        }
-    </style>
 </body>
 </html>
