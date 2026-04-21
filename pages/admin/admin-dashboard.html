@@ -193,7 +193,7 @@
             content.textContent = 'Loading bookings...';
 
             try {
-                const response = await apiRequest('/bookings');
+                const response = await BookingsAPI.getAll();
                 const bookings = response.bookings || [];
 
                 if (bookings.length === 0) {
@@ -248,10 +248,7 @@
 
         async function updateBookingStatus(id, status) {
             try {
-                await apiRequest(`/bookings/${id}/status`, {
-                    method: 'PUT',
-                    body: JSON.stringify({ status })
-                });
+                await BookingsAPI.updateStatus(id, status);
                 showMessage(`Booking ${status}!`, 'success');
                 loadBookings();
                 loadStats();
@@ -267,7 +264,7 @@
             content.textContent = 'Loading accommodation...';
 
             try {
-                const response = await apiRequest('/accommodation');
+                const response = await AccommodationAPI.getAll();
                 const items = response.accommodation || [];
 
                 if (items.length === 0) {
@@ -426,7 +423,7 @@
             content.textContent = 'Loading activities...';
 
             try {
-                const response = await apiRequest('/activities');
+                const response = await ActivitiesAPI.getAll();
                 const items = response.activities || [];
 
                 if (items.length === 0) {

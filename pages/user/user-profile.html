@@ -296,7 +296,7 @@
             try {
                 console.log('📡 Fetching user bookings from backend...');
 
-                const response = await apiRequest('/bookings/my-bookings');
+                const response = await BookingsAPI.getMyBookings();
                 const bookings = response.bookings;
 
                 console.log(`✅ Loaded ${bookings.length} bookings`);
@@ -406,7 +406,7 @@ Booked on: ${new Date(booking.created_at).toLocaleString()}`);
             try {
                 console.log('📡 Fetching user favorites from backend...');
 
-                const response = await apiRequest('/favorites');
+                const response = await FavoritesAPI.getAll();
                 const favorites = response.favorites;
 
                 console.log(`✅ Loaded ${favorites.length} favorites`);
@@ -459,9 +459,7 @@ Booked on: ${new Date(booking.created_at).toLocaleString()}`);
             if (!confirm('Are you sure you want to remove this from favorites?')) return;
 
             try {
-                await apiRequest(`/favorites/${favoriteId}`, {
-                    method: 'DELETE'
-                });
+                await FavoritesAPI.remove(favoriteId);
 
                 showMessage('Removed from favorites successfully', 'success');
 
