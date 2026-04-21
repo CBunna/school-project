@@ -491,12 +491,20 @@
         }
 
         // Load all dynamic content when page loads
-        document.addEventListener('DOMContentLoaded', function() {
+        // Check if DOM is already loaded
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', loadAllContent);
+        } else {
+            // DOM already loaded, run immediately
+            loadAllContent();
+        }
+
+        function loadAllContent() {
             console.log('🚀 Loading dynamic content for homepage...');
             loadRecommendedAccommodation();
             loadPopularActivities();
             loadTopAttractions();
-        });
+        }
     </script>
 </body>
 </html>
