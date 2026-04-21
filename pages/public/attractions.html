@@ -428,7 +428,11 @@
                 if (customAttractions.length > 0) {
                     // Wait for DOM to be ready
                     if (document.readyState === 'loading') {
-                        document.addEventListener('DOMContentLoaded', loadAttractions);
+                        if (document.readyState === 'loading') {
+                            document.addEventListener('DOMContentLoaded', loadAttractions);
+                        } else {
+                            loadAttractions();
+                        }
                     } else {
                         loadAttractions();
                     }

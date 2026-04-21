@@ -321,7 +321,11 @@
         }
 
         // Load accommodation when page loads
-        window.addEventListener('DOMContentLoaded', loadAccommodation);
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', loadAccommodation);
+        } else {
+            loadAccommodation();
+        }
     </script>
 
     <style>

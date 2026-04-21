@@ -335,7 +335,11 @@
         }
 
         // Load activities when page loads
-        window.addEventListener('DOMContentLoaded', loadActivities);
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', loadActivities);
+        } else {
+            loadActivities();
+        }
     </script>
 
     <style>

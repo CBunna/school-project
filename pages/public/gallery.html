@@ -227,7 +227,11 @@
         }
 
         // Load gallery when page loads
-        window.addEventListener('DOMContentLoaded', loadGallery);
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', loadGallery);
+        } else {
+            loadGallery();
+        }
     </script>
 
     <style>
