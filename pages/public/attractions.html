@@ -414,12 +414,35 @@
     <script src="../../js/api.js"></script>
     <script src="../../js/auth.js"></script>
     <script>
+        // Fetch with timeout helper
+        async function fetchWithTimeout(url, options = {}, timeout = 60000) {
+            const controller = new AbortController();
+            const timeoutId = setTimeout(() => controller.abort(), timeout);
+
+            try {
+                const response = await fetch(url, {
+                    ...options,
+                    signal: controller.signal
+                });
+                clearTimeout(timeoutId);
+                return response;
+            } catch (error) {
+                clearTimeout(timeoutId);
+                if (error.name === 'AbortError') {
+                    throw new Error('Request timed out - backend may be starting up, please try again');
+                }
+                throw error;
+            }
+        }
+
         // Load and display custom attractions from backend API
         // This needs to run BEFORE main.js animations
         (async function() {
             try {
-                // Fetch attractions from backend API
-                const response = await fetch(`${API_BASE_URL}/attractions`);
+                console.log('📡 Fetching attractions from backend...');
+
+                // Fetch attractions from backend API with timeout
+                const response = await fetchWithTimeout(`${API_BASE_URL}/attractions`, {}, 60000);
                 const data = await response.json();
                 const customAttractions = data.attractions.filter(a => a.is_custom);
 

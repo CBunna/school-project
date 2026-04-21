@@ -154,13 +154,44 @@
             : 'https://beskydy-backend.onrender.com/api';
         console.log('🌐 API_BASE_URL:', API_BASE_URL);
 
+        // Fetch with timeout helper
+        async function fetchWithTimeout(url, options = {}, timeout = 60000) {
+            const controller = new AbortController();
+            const timeoutId = setTimeout(() => controller.abort(), timeout);
+
+            try {
+                const response = await fetch(url, {
+                    ...options,
+                    signal: controller.signal
+                });
+                clearTimeout(timeoutId);
+                return response;
+            } catch (error) {
+                clearTimeout(timeoutId);
+                if (error.name === 'AbortError') {
+                    throw new Error('Request timed out - backend may be starting up, please try again');
+                }
+                throw error;
+            }
+        }
+
         async function loadAccommodation() {
             const grid = document.getElementById('accommodation-grid');
 
             try {
                 console.log('📡 Fetching accommodation from backend...');
 
-                const response = await fetch(`${API_BASE_URL}/accommodation`);
+                // Show loading message with backend wake-up notice
+                grid.innerHTML = `
+                    <p style="grid-column: 1 / -1; text-align: center; padding: 2rem; color: #666;">
+                        Loading accommodation...<br>
+                        <small style="color: #999; margin-top: 0.5rem; display: block;">
+                            (Backend may take 30-60 seconds to wake up on first visit)
+                        </small>
+                    </p>
+                `;
+
+                const response = await fetchWithTimeout(`${API_BASE_URL}/accommodation`, {}, 60000);
                 const data = await response.json();
 
                 if (!response.ok) {
