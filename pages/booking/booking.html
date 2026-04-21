@@ -234,56 +234,75 @@
 
     <script src="../../js/main.js"></script>
     <script src="../../js/auth.js"></script>
+    <script src="../../js/api.js"></script>
     <script>
-        // Read URL parameters and pre-fill form
-        window.addEventListener('DOMContentLoaded', function() {
-            const urlParams = new URLSearchParams(window.location.search);
-            const type = urlParams.get('type');
-            const item = urlParams.get('item');
+        // Dynamic Booking System - Load options from database
+        let accommodationData = [];
+        let activityData = [];
 
-            if (type && item) {
-                // Set booking type
-                const bookingType = document.getElementById('booking-type');
-                bookingType.value = type;
+        // Read URL parameters for pre-filling
+        const urlParams = new URLSearchParams(window.location.search);
+        const prefilledType = urlParams.get('type');
+        const prefilledId = urlParams.get('id');
+        const prefilledItem = urlParams.get('item');
 
-                // Trigger change event to show correct fields
-                bookingType.dispatchEvent(new Event('change'));
+        // Load accommodation and activities from database
+        async function loadBookingOptions() {
+            try {
+                const [accommodationRes, activitiesRes] = await Promise.all([
+                    AccommodationAPI.getAll(),
+                    ActivitiesAPI.getAll()
+                ]);
 
-                // Pre-fill accommodation or activity
-                if (type === 'accommodation') {
-                    const accommodationSelect = document.getElementById('accommodation-select');
-                    // Add the item as an option if it doesn't exist
-                    let optionExists = false;
-                    for (let option of accommodationSelect.options) {
-                        if (option.value === item) {
-                            optionExists = true;
-                            break;
-                        }
+                accommodationData = accommodationRes.accommodation;
+                activityData = activitiesRes.activities;
+
+                // Populate accommodation select
+                const accommodationSelect = document.getElementById('accommodation-select');
+                accommodationSelect.innerHTML = '<option value="">Choose accommodation</option>';
+                accommodationData.forEach(acc => {
+                    const option = document.createElement('option');
+                    option.value = acc.id;
+                    option.textContent = `${acc.name} - $${parseFloat(acc.price_per_night).toFixed(0)}/night (${acc.location})`;
+                    option.dataset.price = acc.price_per_night;
+                    option.dataset.name = acc.name;
+                    accommodationSelect.appendChild(option);
+                });
+
+                // Populate activity select
+                const activitySelect = document.getElementById('activity-select');
+                activitySelect.innerHTML = '<option value="">Choose activity</option>';
+                activityData.forEach(act => {
+                    const option = document.createElement('option');
+                    option.value = act.id;
+                    option.textContent = `${act.name} - $${parseFloat(act.price).toFixed(0)}/person (${act.duration})`;
+                    option.dataset.price = act.price;
+                    option.dataset.name = act.name;
+                    activitySelect.appendChild(option);
+                });
+
+                // Pre-fill form if URL parameters exist
+                if (prefilledType && prefilledId) {
+                    const bookingType = document.getElementById('booking-type');
+                    bookingType.value = prefilledType;
+                    bookingType.dispatchEvent(new Event('change'));
+
+                    // Pre-select the item
+                    if (prefilledType === 'accommodation') {
+                        document.getElementById('accommodation-select').value = prefilledId;
+                    } else if (prefilledType === 'activity') {
+                        document.getElementById('activity-select').value = prefilledId;
                     }
-                    if (!optionExists) {
-                        const newOption = new Option(item, item, true, true);
-                        accommodationSelect.add(newOption);
-                    }
-                    accommodationSelect.value = item;
-                } else if (type === 'activity') {
-                    const activitySelect = document.getElementById('activity-select');
-                    let optionExists = false;
-                    for (let option of activitySelect.options) {
-                        if (option.value === item) {
-                            optionExists = true;
-                            break;
-                        }
-                    }
-                    if (!optionExists) {
-                        const newOption = new Option(item, item, true, true);
-                        activitySelect.add(newOption);
-                    }
-                    activitySelect.value = item;
                 }
-            }
-        });
 
-        // Simple booking form logic
+                console.log('✅ Booking options loaded successfully');
+            } catch (error) {
+                console.error('❌ Error loading booking options:', error);
+                alert('Error loading booking options. Please refresh the page.');
+            }
+        }
+
+        // Booking form type switching logic
         const bookingType = document.getElementById('booking-type');
         const accommodationGroup = document.getElementById('accommodation-group');
         const activityGroup = document.getElementById('activity-group');
@@ -305,42 +324,81 @@
             }
         });
 
-        // Enhanced booking submission
-        document.getElementById('booking-form').addEventListener('submit', function(e) {
+        // Dynamic booking submission to API
+        document.getElementById('booking-form').addEventListener('submit', async function(e) {
             e.preventDefault();
 
+            // Check if user is logged in
+            const user = getCurrentUser();
+            if (!user) {
+                alert('Please login to make a booking');
+                window.location.href = '../auth/login.html';
+                return;
+            }
+
             const formData = new FormData(this);
+            const type = formData.get('booking-type');
+            const itemId = type === 'accommodation'
+                ? formData.get('accommodation')
+                : formData.get('activity');
+
+            // Get item details
+            let itemData;
+            let itemName;
+            let pricePerUnit;
+
+            if (type === 'accommodation') {
+                itemData = accommodationData.find(acc => acc.id == itemId);
+                itemName = itemData?.name || 'Unknown';
+                pricePerUnit = parseFloat(itemData?.price_per_night || 0);
+            } else {
+                itemData = activityData.find(act => act.id == itemId);
+                itemName = itemData?.name || 'Unknown';
+                pricePerUnit = parseFloat(itemData?.price || 0);
+            }
+
+            // Calculate total price
+            const checkIn = new Date(formData.get('checkin'));
+            const checkOut = new Date(formData.get('checkout'));
+            const nights = Math.ceil((checkOut - checkIn) / (1000 * 60 * 60 * 24));
+            const guests = parseInt(formData.get('guests'));
+            const totalPrice = type === 'accommodation'
+                ? pricePerUnit * nights
+                : pricePerUnit * guests;
+
+            // Prepare booking data for API
             const bookingData = {
-                type: formData.get('booking-type'),
-                accommodation: formData.get('accommodation'),
-                activity: formData.get('activity'),
-                checkIn: formData.get('checkin'),
-                checkOut: formData.get('checkout'),
-                guests: formData.get('guests'),
-                fullName: formData.get('full-name'),
-                email: formData.get('email'),
-                phone: formData.get('phone'),
-                specialRequests: formData.get('special-requests')
+                booking_type: type,
+                item_id: parseInt(itemId),
+                item_name: itemName,
+                check_in: formData.get('checkin'),
+                check_out: formData.get('checkout'),
+                guests: guests,
+                total_price: totalPrice,
+                special_requests: formData.get('special-requests') || null
             };
 
-            // Save to localStorage (demo)
-            const bookings = JSON.parse(localStorage.getItem('bookings') || '[]');
-            bookingData.id = Date.now();
-            bookingData.status = 'pending';
-            bookingData.createdAt = new Date().toISOString();
-            bookings.push(bookingData);
-            localStorage.setItem('bookings', JSON.stringify(bookings));
+            try {
+                console.log('📤 Submitting booking:', bookingData);
+                const response = await BookingsAPI.create(bookingData);
+                console.log('✅ Booking created:', response);
 
-            // Show success message with booking details
-            const itemName = bookingData.type === 'accommodation' ? bookingData.accommodation : bookingData.activity;
-            alert(`✅ Booking confirmed for ${itemName}!\n\nYou will receive a confirmation email shortly.\n\nBooking ID: ${bookingData.id}`);
+                alert(`✅ Booking confirmed for ${itemName}!\n\nTotal: $${totalPrice.toFixed(2)}\nBooking ID: ${response.booking.id}\n\nYou will receive a confirmation email shortly.`);
 
-            // Reset form and redirect
-            this.reset();
-            setTimeout(() => {
-                window.location.href = '../user/user-profile.html';
-            }, 1000);
+                // Reset form and redirect to user profile
+                this.reset();
+                setTimeout(() => {
+                    window.location.href = '../user/user-profile.html';
+                }, 1500);
+
+            } catch (error) {
+                console.error('❌ Booking error:', error);
+                alert(`Error creating booking: ${error.message}\n\nPlease try again or contact support.`);
+            }
         });
+
+        // Load booking options when page loads
+        window.addEventListener('DOMContentLoaded', loadBookingOptions);
     </script>
 </body>
 </html>

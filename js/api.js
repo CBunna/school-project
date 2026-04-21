@@ -196,6 +196,14 @@ const BookingsAPI = {
     },
 
     /**
+     * Get current user's bookings
+     * @returns {Promise<Array>} List of user's bookings
+     */
+    async getMyBookings() {
+        return await apiRequest('/bookings/my-bookings');
+    },
+
+    /**
      * Create new booking
      * @param {Object} bookingData - Booking information
      * @returns {Promise<Object>} Created booking
@@ -204,6 +212,30 @@ const BookingsAPI = {
         return await apiRequest('/bookings', {
             method: 'POST',
             body: JSON.stringify(bookingData)
+        });
+    },
+
+    /**
+     * Update booking status (admin only)
+     * @param {number} bookingId - Booking ID
+     * @param {string} status - New status
+     * @returns {Promise<Object>} Updated booking
+     */
+    async updateStatus(bookingId, status) {
+        return await apiRequest(`/bookings/${bookingId}/status`, {
+            method: 'PUT',
+            body: JSON.stringify({ status })
+        });
+    },
+
+    /**
+     * Delete booking (admin only)
+     * @param {number} bookingId - Booking ID
+     * @returns {Promise<Object>} Deletion confirmation
+     */
+    async delete(bookingId) {
+        return await apiRequest(`/bookings/${bookingId}`, {
+            method: 'DELETE'
         });
     }
 };

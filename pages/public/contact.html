@@ -307,24 +307,24 @@
     <script src="../../js/auth.js"></script>
     <script src="../../js/api.js"></script>
     <script>
-        // Detect environment and use correct API URL
-        const API_BASE_URL = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
-            ? 'http://localhost:3001/api'
-            : 'https://beskydy-backend.onrender.com/api';
-        console.log('🌐 API_BASE_URL:', API_BASE_URL);
+        // API_BASE_URL is already defined in api.js
+        console.log('📄 Contact page loaded, API_BASE_URL:', API_BASE_URL);
+
         // Handle contact form submission
         document.getElementById('contact-form').addEventListener('submit', async function(e) {
             e.preventDefault();
 
             // Get form values
-            const name = document.getElementById('name').value;
-            const email = document.getElementById('email').value;
-            const phone = document.getElementById('phone').value;
-            const subject = document.getElementById('subject').value;
-            const message = document.getElementById('message').value;
+            const contactData = {
+                name: document.getElementById('name').value,
+                email: document.getElementById('email').value,
+                phone: document.getElementById('phone').value || null,
+                subject: document.getElementById('subject').value,
+                message: document.getElementById('message').value
+            };
 
             // Validation
-            if (!name || !email || !message) {
+            if (!contactData.name || !contactData.email || !contactData.message) {
                 showMessage('Please fill in all required fields (Name, Email, Message)', 'error');
                 return;
             }
@@ -332,27 +332,9 @@
             try {
                 console.log('📤 Submitting contact form...');
 
-                const response = await fetch(`${API_BASE_URL}/contact`, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({
-                        name,
-                        email,
-                        phone,
-                        subject,
-                        message
-                    })
-                });
+                const response = await ContactAPI.submit(contactData);
 
-                const data = await response.json();
-
-                if (!response.ok) {
-                    throw new Error(data.error || 'Failed to submit contact form');
-                }
-
-                console.log('✅ Contact form submitted successfully');
+                console.log('✅ Contact form submitted successfully:', response);
                 showMessage(data.message || 'Message sent successfully! We will get back to you soon.', 'success');
 
                 // Clear form
