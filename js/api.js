@@ -234,6 +234,56 @@ const ContactAPI = {
 };
 
 /**
+ * Favorites API calls
+ */
+const FavoritesAPI = {
+    /**
+     * Get user's favorites
+     * @returns {Promise<Array>} List of user's favorites
+     */
+    async getAll() {
+        return await apiRequest('/favorites');
+    },
+
+    /**
+     * Add item to favorites
+     * @param {string} itemType - Type of item (accommodation, activity, attraction)
+     * @param {number} itemId - ID of the item
+     * @returns {Promise<Object>} Created favorite
+     */
+    async add(itemType, itemId) {
+        return await apiRequest('/favorites', {
+            method: 'POST',
+            body: JSON.stringify({
+                item_type: itemType,
+                item_id: itemId
+            })
+        });
+    },
+
+    /**
+     * Remove favorite by ID
+     * @param {number} favoriteId - Favorite ID
+     * @returns {Promise<Object>} Deletion confirmation
+     */
+    async remove(favoriteId) {
+        return await apiRequest(`/favorites/${favoriteId}`, {
+            method: 'DELETE'
+        });
+    },
+
+    /**
+     * Check if item is favorited
+     * @param {string} itemType - Type of item
+     * @param {number} itemId - ID of the item
+     * @returns {Promise<Object>} Favorite status
+     */
+    async check(itemType, itemId) {
+        return await apiRequest(`/favorites/check/${itemType}/${itemId}`);
+    }
+};
+
+/**
  * Example Usage:
  *
  * // Login

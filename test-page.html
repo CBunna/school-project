@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html><head><title>Test</title></head><body>
+<div id="test">Loading...</div>
+<script>
+console.log('Script running');
+const API_BASE_URL = 'https://beskydy-backend.onrender.com/api';
+console.log('API URL:', API_BASE_URL);
+
+async function loadTest() {
+    console.log('loadTest called');
+    try {
+        const response = await fetch(API_BASE_URL + '/accommodation');
+        console.log('Response:', response.status);
+        const data = await response.json();
+        console.log('Data:', data);
+        document.getElementById('test').innerHTML = 'Success! Got ' + data.count + ' items';
+    } catch (error) {
+        console.error('Error:', error);
+        document.getElementById('test').innerHTML = 'Error: ' + error.message;
+    }
+}
+
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', loadTest);
+} else {
+    loadTest();
+}
+</script>
+</body></html>

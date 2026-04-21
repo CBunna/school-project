@@ -164,11 +164,8 @@
     <script src="../../js/api.js"></script>
     <script>
         // Load activities from backend database
-        // Detect environment and use correct API URL
-        const API_BASE_URL = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
-            ? 'http://localhost:3001/api'
-            : 'https://beskydy-backend.onrender.com/api';
-        console.log('🌐 API_BASE_URL:', API_BASE_URL);
+        // API_BASE_URL is already defined in api.js
+        console.log('📄 Activities page loaded, API_BASE_URL:', API_BASE_URL);
 
         // Fetch with timeout helper
         async function fetchWithTimeout(url, options = {}, timeout = 60000) {
@@ -296,7 +293,7 @@
 
         // Toggle favorite
         async function toggleFavorite(itemType, itemId, button) {
-            const user = JSON.parse(localStorage.getItem('user') || 'null');
+            const user = getCurrentUser();
 
             if (!user) {
                 alert('Please login to save favorites');
@@ -309,9 +306,7 @@
 
                 if (isFavorited) {
                     const favoriteId = button.dataset.favoriteId;
-                    await apiRequest(`/favorites/${favoriteId}`, {
-                        method: 'DELETE'
-                    });
+                    await FavoritesAPI.remove(favoriteId);
 
                     button.classList.remove('favorited');
                     button.style.background = 'transparent';
@@ -321,13 +316,7 @@
 
                     showMessage('Removed from favorites', 'success');
                 } else {
-                    const response = await apiRequest('/favorites', {
-                        method: 'POST',
-                        body: JSON.stringify({
-                            item_type: itemType,
-                            item_id: itemId
-                        })
-                    });
+                    const response = await FavoritesAPI.add(itemType, itemId);
 
                     button.classList.add('favorited');
                     button.style.background = '#dc3545';
