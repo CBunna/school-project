@@ -366,14 +366,13 @@
                 ? pricePerUnit * nights
                 : pricePerUnit * guests;
 
-            // Prepare booking data for API
+            // Prepare booking data for API (match backend field names)
             const bookingData = {
                 booking_type: type,
                 item_id: parseInt(itemId),
-                item_name: itemName,
-                check_in: formData.get('checkin'),
-                check_out: formData.get('checkout'),
-                guests: guests,
+                check_in_date: formData.get('checkin'),
+                check_out_date: formData.get('checkout') || null,
+                number_of_guests: guests,
                 total_price: totalPrice,
                 special_requests: formData.get('special-requests') || null
             };
